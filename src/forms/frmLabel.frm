@@ -13,6 +13,7 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
+
 Option Explicit
 
 Private Sub UserForm_Initialize()
@@ -20,10 +21,8 @@ Private Sub UserForm_Initialize()
     LoadFinishings
     LoadOperators
 
-    txtQuantity.value = "1"
-    txtDeadline.value = Format$(Date, "dd/mm/yyyy")
-
-    LoadSelectedSize
+    txtQuantity.Value = "1"
+    txtDeadline.Value = Format$(Date, "dd/mm/yyyy")
 End Sub
 
 Private Sub LoadProducts()
@@ -56,35 +55,21 @@ Private Sub LoadOperators()
     Next item
 End Sub
 
-Private Sub LoadSelectedSize()
-    Dim widthCm As Double
-    Dim heightCm As Double
-
-    If ActiveSelectionRange.Count = 0 Then
-        txtUkuran.value = ""
-        Exit Sub
-    End If
-
-    widthCm = GetSelectedWidthCm()
-    heightCm = GetSelectedHeightCm()
-
-    txtUkuran.value = Format(widthCm, "0.##") & "X" & _
-                      Format(heightCm, "0.##")
-End Sub
-
 Private Sub cmdSimpan_Click()
     Dim sr As ShapeRange
+    Dim oneShape As ShapeRange
+    Dim shp As Shape
+    Dim i As Long
     Dim widthCm As Double
     Dim heightCm As Double
-    Dim canvas As Shape
 
-    If Trim$(txtNoInv.value) = "" Then
+    If Trim$(txtNoInv.Value) = "" Then
         MsgBox "No Inv wajib diisi.", vbExclamation, "MgoCorel"
         txtNoInv.SetFocus
         Exit Sub
     End If
 
-    If Trim$(txtNama.value) = "" Then
+    If Trim$(txtNama.Value) = "" Then
         MsgBox "Nama wajib diisi.", vbExclamation, "MgoCorel"
         txtNama.SetFocus
         Exit Sub
@@ -96,8 +81,10 @@ Private Sub cmdSimpan_Click()
         Exit Sub
     End If
 
-    If ActiveSelectionRange.Count = 0 Then
-        MsgBox "Pilih objek terlebih dahulu.", vbExclamation, "MgoCorel"
+    Set sr = ActiveSelectionRange
+
+    If sr.Count = 0 Then
+        MsgBox "Pilih minimal satu objek terlebih dahulu.", vbExclamation, "MgoCorel"
         Exit Sub
     End If
 
@@ -107,13 +94,13 @@ Private Sub cmdSimpan_Click()
         Exit Sub
     End If
 
-    If Val(txtQuantity.value) <= 0 Then
+    If Val(txtQuantity.Value) <= 0 Then
         MsgBox "Quantity harus lebih dari 0.", vbExclamation, "MgoCorel"
         txtQuantity.SetFocus
         Exit Sub
     End If
 
-    If Trim$(txtDeadline.value) = "" Then
+    If Trim$(txtDeadline.Value) = "" Then
         MsgBox "Deadline wajib diisi.", vbExclamation, "MgoCorel"
         txtDeadline.SetFocus
         Exit Sub
@@ -125,24 +112,29 @@ Private Sub cmdSimpan_Click()
         Exit Sub
     End If
 
-    Set sr = ActiveSelectionRange
+    For i = 1 To sr.Count
+        Set shp = sr(i)
 
-    widthCm = GetSelectedWidthCm()
-    heightCm = GetSelectedHeightCm()
+        widthCm = GetShapeWidthCm(shp)
+        heightCm = GetShapeHeightCm(shp)
 
-    Set canvas = CreateLabelCanvas(sr)
+        Set oneShape = CreateShapeRange
+        oneShape.Add shp
 
-    CreateLabelTexts _
-        sr, _
-        txtNama.value, _
-        cmbProduk.value, _
-        widthCm, _
-        heightCm, _
-        cmbFinishing.value, _
-        txtQuantity.value, _
-        txtDeadline.value, _
-        cmbOperator.value, _
-        txtNoInv.value
+        CreateLabelCanvas oneShape
+
+        CreateLabelTexts _
+            oneShape, _
+            txtNama.Value, _
+            cmbProduk.Value, _
+            widthCm, _
+            heightCm, _
+            cmbFinishing.Value, _
+            txtQuantity.Value, _
+            txtDeadline.Value, _
+            cmbOperator.Value, _
+            txtNoInv.Value
+    Next i
 
     Unload Me
 End Sub

@@ -5,29 +5,17 @@ Public Sub Plugin_ShowLabelForm()
     frmLabel.Show
 End Sub
 
-Public Function GetSelectedWidthCm() As Double
-    Dim sr As ShapeRange
-
-    If ActiveSelectionRange.Count = 0 Then Exit Function
-
-    Set sr = ActiveSelectionRange
-
-    GetSelectedWidthCm = Application.ConvertUnits( _
-        sr.SizeWidth, _
+Public Function GetShapeWidthCm(ByVal shp As Shape) As Double
+    GetShapeWidthCm = Application.ConvertUnits( _
+        shp.SizeWidth, _
         ActiveDocument.Unit, _
         cdrCentimeter _
     )
 End Function
 
-Public Function GetSelectedHeightCm() As Double
-    Dim sr As ShapeRange
-
-    If ActiveSelectionRange.Count = 0 Then Exit Function
-
-    Set sr = ActiveSelectionRange
-
-    GetSelectedHeightCm = Application.ConvertUnits( _
-        sr.SizeHeight, _
+Public Function GetShapeHeightCm(ByVal shp As Shape) As Double
+    GetShapeHeightCm = Application.ConvertUnits( _
+        shp.SizeHeight, _
         ActiveDocument.Unit, _
         cdrCentimeter _
     )
@@ -55,8 +43,8 @@ Public Function CreateLabelCanvas(ByVal sr As ShapeRange) As Shape
 
     canvas.SizeWidth = canvasWidth
     canvas.SizeHeight = canvasHeight
-    canvas.centerX = sr.centerX
-    canvas.centerY = sr.centerY
+    canvas.CenterX = sr.CenterX
+    canvas.CenterY = sr.CenterY
 
     canvas.Fill.ApplyNoFill
     canvas.OrderToBack
@@ -122,13 +110,13 @@ Private Function CreateOneLabelText( _
         cdrCenterAlignment _
     )
 
-    label.centerX = centerX
-    label.centerY = centerY
+    label.CenterX = centerX
+    label.CenterY = centerY
 
     If rotation <> 0 Then
         label.Rotate rotation
-        label.centerX = centerX
-        label.centerY = centerY
+        label.CenterX = centerX
+        label.CenterY = centerY
     End If
 
     Set CreateOneLabelText = label
@@ -161,8 +149,8 @@ Public Sub CreateLabelTexts( _
         ActiveDocument.Unit _
     )
 
-    stripDoc = extraDoc / 2
-    labelCenter = stripDoc / 2
+    stripDoc = extraDoc / 2#
+    labelCenter = stripDoc / 2#
 
     labelText = BuildLabelText( _
         nama, _
@@ -179,14 +167,14 @@ Public Sub CreateLabelTexts( _
     If sr.SizeHeight >= sr.SizeWidth Then
         Set labelTop = CreateOneLabelText( _
             labelText, _
-            sr.centerX, _
+            sr.CenterX, _
             sr.TopY + labelCenter, _
             0 _
         )
 
         Set labelBottom = CreateOneLabelText( _
             labelText, _
-            sr.centerX, _
+            sr.CenterX, _
             sr.BottomY - labelCenter, _
             0 _
         )
@@ -194,16 +182,15 @@ Public Sub CreateLabelTexts( _
         Set labelLeft = CreateOneLabelText( _
             labelText, _
             sr.LeftX - labelCenter, _
-            sr.centerY, _
+            sr.CenterY, _
             90 _
         )
 
         Set labelRight = CreateOneLabelText( _
             labelText, _
             sr.RightX + labelCenter, _
-            sr.centerY, _
+            sr.CenterY, _
             270 _
         )
     End If
 End Sub
-
