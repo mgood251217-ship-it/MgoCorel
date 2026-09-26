@@ -79,6 +79,29 @@ if ($null -eq $gmsProject) {
 
 Write-Host "GMS: $($gmsProject.FullFileName)" -ForegroundColor Green
 
+$iconSource = Join-Path $PSScriptRoot "..\src\icons"
+$iconSource = [System.IO.Path]::GetFullPath($iconSource)
+
+if (Test-Path $iconSource) {
+    $gmsUserPath = $gmsManager.UserGMSPath
+    $iconDestination = Join-Path $gmsUserPath "icons"
+
+    if (-not (Test-Path $iconDestination)) {
+        New-Item -ItemType Directory -Path $iconDestination -Force | Out-Null
+    }
+
+    $icons = Get-ChildItem -Path $iconSource -Filter "*.ico" -File
+
+    foreach ($icon in $icons) {
+        $destination = Join-Path $iconDestination $icon.Name
+        Copy-Item -Path $icon.FullName -Destination $destination -Force
+        Write-Host "[OK] Icon: $($icon.Name)"
+    }
+}
+else {
+    Write-Host "[INFO] Folder icons tidak ditemukan: $iconSource" -ForegroundColor Yellow
+}
+
 $sourceFiles = @()
 
 if (Test-Path $ModulesPath) {

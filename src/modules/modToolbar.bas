@@ -6,6 +6,7 @@ Private Const TOOLBAR_NAME As String = "MgoCorel Tools"
 Public Sub Plugin_CreateToolbar()
     Dim cb As CommandBar
     Dim btn As Control
+    Dim iconPath As String
 
     On Error GoTo ErrHandler
 
@@ -25,6 +26,11 @@ Public Sub Plugin_CreateToolbar()
     btn.ToolTipText = "Buka Main Dialog"
     btn.DescriptionText = "Buka Main Dialog MgoCorel"
 
+    iconPath = Application.GMSManager.UserGMSPath & "icons\main.ico"
+    If Dir$(iconPath) <> "" Then
+        btn.SetIcon2 iconPath
+    End If
+
     Set btn = cb.Controls.AddCustomButton( _
         cdrCmdCategoryMacros, _
         "MgoCorel.modLabel.Plugin_ShowLabelForm" _
@@ -33,6 +39,11 @@ Public Sub Plugin_CreateToolbar()
     btn.ToolTipText = "Buat Label"
     btn.DescriptionText = "Membuka form untuk membuat label"
 
+    iconPath = Application.GMSManager.UserGMSPath & "icons\label.ico"
+    If Dir$(iconPath) <> "" Then
+        btn.SetIcon2 iconPath
+    End If
+
     Set btn = cb.Controls.AddCustomButton( _
         cdrCmdCategoryMacros, _
         "MgoCorel.modSettings.Plugin_ShowSettingsForm" _
@@ -40,6 +51,11 @@ Public Sub Plugin_CreateToolbar()
     btn.Caption = "Pengaturan"
     btn.ToolTipText = "Pengaturan"
     btn.DescriptionText = "Membuka pengaturan MgoCorel"
+
+    iconPath = Application.GMSManager.UserGMSPath & "icons\settings.ico"
+    If Dir$(iconPath) <> "" Then
+        btn.SetIcon2 iconPath
+    End If
 
     cb.Visible = True
 
@@ -117,4 +133,3 @@ ErrHandler:
            vbCritical, _
            "MgoCorel"
 End Sub
-
