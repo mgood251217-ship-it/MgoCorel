@@ -1,10 +1,10 @@
 VERSION 5.00
 Begin {C62A69F0-16DC-11CE-9E98-00AA00574A4F} frmLabel 
-   Caption         =   "UserForm1"
-   ClientHeight    =   6915
+   Caption         =   "Pelabelan Spanduk"
+   ClientHeight    =   5610
    ClientLeft      =   120
    ClientTop       =   465
-   ClientWidth     =   4560
+   ClientWidth     =   3180
    OleObjectBlob   =   "frmLabel.frx":0000
    StartUpPosition =   1  'CenterOwner
 End
@@ -17,10 +17,17 @@ Attribute VB_Exposed = False
 Option Explicit
 
 Private Sub UserForm_Initialize()
+    LoadSystems
     LoadProducts
     LoadFinishings
     LoadOperators
     LoadLabelState Me
+End Sub
+
+Private Sub LoadSystems()
+    cmbSystem.Clear
+    cmbSystem.AddItem "Offline"
+    cmbSystem.AddItem "Online"
 End Sub
 
 Private Sub LoadProducts()
@@ -61,13 +68,19 @@ Private Sub cmdSimpan_Click()
     Dim widthM As Double
     Dim heightM As Double
 
-    If Trim$(txtNoInv.value) = "" Then
+    If cmbSystem.ListIndex = -1 Then
+        MsgBox "System wajib dipilih.", vbExclamation, "MgoCorel"
+        cmbSystem.SetFocus
+        Exit Sub
+    End If
+
+    If Trim$(txtNoInv.Value) = "" Then
         MsgBox "No Inv wajib diisi.", vbExclamation, "MgoCorel"
         txtNoInv.SetFocus
         Exit Sub
     End If
 
-    If Trim$(txtNama.value) = "" Then
+    If Trim$(txtNama.Value) = "" Then
         MsgBox "Nama wajib diisi.", vbExclamation, "MgoCorel"
         txtNama.SetFocus
         Exit Sub
@@ -92,13 +105,13 @@ Private Sub cmdSimpan_Click()
         Exit Sub
     End If
 
-    If Val(txtQuantity.value) <= 0 Then
+    If Val(txtQuantity.Value) <= 0 Then
         MsgBox "Quantity harus lebih dari 0.", vbExclamation, "MgoCorel"
         txtQuantity.SetFocus
         Exit Sub
     End If
 
-    If Trim$(txtDeadline.value) = "" Then
+    If Trim$(txtDeadline.Value) = "" Then
         MsgBox "Deadline wajib diisi.", vbExclamation, "MgoCorel"
         txtDeadline.SetFocus
         Exit Sub
@@ -125,15 +138,16 @@ Private Sub cmdSimpan_Click()
 
         CreateLabelTexts _
             oneShape, _
-            txtNama.value, _
-            cmbProduk.value, _
+            cmbSystem.Value, _
+            txtNama.Value, _
+            cmbProduk.Value, _
             widthM, _
             heightM, _
-            cmbFinishing.value, _
-            txtQuantity.value, _
-            txtDeadline.value, _
-            cmbOperator.value, _
-            txtNoInv.value
+            cmbFinishing.Value, _
+            txtQuantity.Value, _
+            txtDeadline.Value, _
+            cmbOperator.Value, _
+            txtNoInv.Value
     Next i
 
     Unload Me

@@ -2,6 +2,7 @@ Attribute VB_Name = "modLabel"
 Option Explicit
 
 Private mLabelStateLoaded As Boolean
+Private mLastSystem As String
 Private mLastNoInv As String
 Private mLastNama As String
 Private mLastProduk As String
@@ -16,6 +17,7 @@ End Sub
 
 Public Sub LoadLabelState(ByVal form As Object)
     If Not mLabelStateLoaded Then
+        mLastSystem = ""
         mLastNoInv = ""
         mLastNama = ""
         mLastProduk = ""
@@ -26,53 +28,65 @@ Public Sub LoadLabelState(ByVal form As Object)
         mLabelStateLoaded = True
     End If
 
-    form.txtNoInv.value = mLastNoInv
-    form.txtNama.value = mLastNama
-    form.txtQuantity.value = mLastQuantity
-    form.txtDeadline.value = mLastDeadline
+    If mLastSystem <> "" Then
+        form.cmbSystem.Value = mLastSystem
+    End If
+
+    If form.cmbSystem.ListIndex = -1 Then
+        If form.cmbSystem.ListCount > 0 Then
+            form.cmbSystem.ListIndex = 0
+        End If
+    End If
+
+    form.txtNoInv.Value = mLastNoInv
+    form.txtNama.Value = mLastNama
+    form.txtQuantity.Value = mLastQuantity
+    form.txtDeadline.Value = mLastDeadline
 
     If form.cmbProduk.ListCount > 0 Then
         If mLastProduk <> "" Then
-            form.cmbProduk.value = mLastProduk
-            If form.cmbProduk.ListIndex = -1 Then
-                form.cmbProduk.ListIndex = 0
-            End If
-        Else
+            form.cmbProduk.Value = mLastProduk
+        End If
+
+        If form.cmbProduk.ListIndex = -1 Then
             form.cmbProduk.ListIndex = 0
         End If
     End If
 
     If form.cmbFinishing.ListCount > 0 Then
         If mLastFinishing <> "" Then
-            form.cmbFinishing.value = mLastFinishing
-            If form.cmbFinishing.ListIndex = -1 Then
-                form.cmbFinishing.ListIndex = 0
-            End If
-        Else
+            form.cmbFinishing.Value = mLastFinishing
+        End If
+
+        If form.cmbFinishing.ListIndex = -1 Then
             form.cmbFinishing.ListIndex = 0
         End If
     End If
 
     If form.cmbOperator.ListCount > 0 Then
         If mLastOperator <> "" Then
-            form.cmbOperator.value = mLastOperator
-            If form.cmbOperator.ListIndex = -1 Then
-                form.cmbOperator.ListIndex = 0
-            End If
-        Else
+            form.cmbOperator.Value = mLastOperator
+        End If
+
+        If form.cmbOperator.ListIndex = -1 Then
             form.cmbOperator.ListIndex = 0
         End If
     End If
 End Sub
 
 Public Sub SaveLabelState(ByVal form As Object)
-    mLastNoInv = Trim$(form.txtNoInv.value)
-    mLastNama = Trim$(form.txtNama.value)
-    mLastProduk = Trim$(form.cmbProduk.value)
-    mLastQuantity = Trim$(form.txtQuantity.value)
-    mLastFinishing = Trim$(form.cmbFinishing.value)
-    mLastDeadline = Trim$(form.txtDeadline.value)
-    mLastOperator = Trim$(form.cmbOperator.value)
+    mLastSystem = Trim$(form.cmbSystem.Value)
+    mLastNoInv = Trim$(form.txtNoInv.Value)
+    mLastNama = Trim$(form.txtNama.Value)
+    mLastProduk = Trim$(form.cmbProduk.Value)
+    mLastQuantity = Trim$(form.txtQuantity.Value)
+    mLastFinishing = Trim$(form.cmbFinishing.Value)
+    mLastDeadline = Trim$(form.txtDeadline.Value)
+    mLastOperator = Trim$(form.cmbOperator.Value)
+
+    If mLastSystem = "" Then
+        mLastSystem = "Offline"
+    End If
 
     If mLastQuantity = "" Then
         mLastQuantity = "1"
@@ -82,6 +96,7 @@ Public Sub SaveLabelState(ByVal form As Object)
 End Sub
 
 Public Sub ClearLabelState(ByVal form As Object)
+    mLastSystem = ""
     mLastNoInv = ""
     mLastNama = ""
     mLastProduk = ""
@@ -90,10 +105,14 @@ Public Sub ClearLabelState(ByVal form As Object)
     mLastDeadline = Format$(Date, "dd/mm/yyyy")
     mLastOperator = ""
 
-    form.txtNoInv.value = ""
-    form.txtNama.value = ""
-    form.txtQuantity.value = "1"
-    form.txtDeadline.value = Format$(Date, "dd/mm/yyyy")
+    If form.cmbSystem.ListCount > 0 Then
+        form.cmbSystem.ListIndex = 0
+    End If
+
+    form.txtNoInv.Value = ""
+    form.txtNama.Value = ""
+    form.txtQuantity.Value = "1"
+    form.txtDeadline.Value = Format$(Date, "dd/mm/yyyy")
 
     If form.cmbProduk.ListCount > 0 Then
         form.cmbProduk.ListIndex = 0
@@ -158,24 +177,38 @@ Public Function CreateLabelCanvas(ByVal sr As ShapeRange) As Shape
 End Function
 
 Private Function BuildLabelText( _
+    ByVal systemName As String, _
     ByVal nama As String, _
     ByVal productName As String, _
-    ByVal widthCm As Double, _
-    ByVal heightCm As Double, _
+    ByVal widthM As Double, _
+    ByVal heightM As Double, _
     ByVal finishing As String, _
     ByVal quantity As String, _
     ByVal deadline As String, _
     ByVal operatorName As String, _
     ByVal invoiceNumber As String) As String
 
+    Dim labelDate As String
+    Dim prefix As String
+
+    labelDate = Format$(Date, "dd/mm/yyyy")
+
+    If StrComp(Trim$(systemName), "Online", vbTextCompare) = 0 Then
+        prefix = "ONLINE_"
+    Else
+        prefix = ""
+    End If
+
     BuildLabelText = UCase$( _
+        prefix & _
         Trim$(nama) & "_" & _
         Trim$(productName) & "_" & _
-        Format$(widthCm, "0.##") & "X" & _
-        Format$(heightCm, "0.##") & "_" & _
+        Format$(widthM, "0.##") & "X" & _
+        Format$(heightM, "0.##") & "_" & _
         Trim$(finishing) & "_" & _
         Trim$(quantity) & "_" & _
         Trim$(deadline) & "_" & _
+        labelDate & "_" & _
         Trim$(operatorName) & "_" & _
         Trim$(invoiceNumber) _
     )
@@ -229,6 +262,7 @@ End Function
 
 Public Sub CreateLabelTexts( _
     ByVal sr As ShapeRange, _
+    ByVal systemName As String, _
     ByVal nama As String, _
     ByVal productName As String, _
     ByVal widthM As Double, _
@@ -258,6 +292,7 @@ Public Sub CreateLabelTexts( _
     labelCenter = stripDoc / 2#
 
     labelText = BuildLabelText( _
+        systemName, _
         nama, _
         productName, _
         widthM, _
