@@ -58,8 +58,8 @@ Private Sub cmdSimpan_Click()
     Dim oneShape As ShapeRange
     Dim shp As Shape
     Dim i As Long
-    Dim widthCm As Double
-    Dim heightCm As Double
+    Dim widthM As Double
+    Dim heightM As Double
 
     If Trim$(txtNoInv.value) = "" Then
         MsgBox "No Inv wajib diisi.", vbExclamation, "MgoCorel"
@@ -115,8 +115,8 @@ Private Sub cmdSimpan_Click()
     For i = 1 To sr.Count
         Set shp = sr(i)
 
-        widthCm = GetShapeWidthCm(shp)
-        heightCm = GetShapeHeightCm(shp)
+    widthM = GetShapeWidthM(shp)
+    heightM = GetShapeHeightM(shp)
 
         Set oneShape = CreateShapeRange
         oneShape.Add shp
@@ -127,8 +127,8 @@ Private Sub cmdSimpan_Click()
             oneShape, _
             txtNama.value, _
             cmbProduk.value, _
-            widthCm, _
-            heightCm, _
+            widthM, _
+            heightM, _
             cmbFinishing.value, _
             txtQuantity.value, _
             txtDeadline.value, _

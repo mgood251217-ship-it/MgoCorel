@@ -110,19 +110,19 @@ Public Sub ClearLabelState(ByVal form As Object)
     mLabelStateLoaded = True
 End Sub
 
-Public Function GetShapeWidthCm(ByVal shp As Shape) As Double
-    GetShapeWidthCm = Application.ConvertUnits( _
+Public Function GetShapeWidthM(ByVal shp As Shape) As Double
+    GetShapeWidthM = Application.ConvertUnits( _
         shp.SizeWidth, _
         ActiveDocument.Unit, _
-        cdrCentimeter _
+        cdrMeter _
     )
 End Function
 
-Public Function GetShapeHeightCm(ByVal shp As Shape) As Double
-    GetShapeHeightCm = Application.ConvertUnits( _
+Public Function GetShapeHeightM(ByVal shp As Shape) As Double
+    GetShapeHeightM = Application.ConvertUnits( _
         shp.SizeHeight, _
         ActiveDocument.Unit, _
-        cdrCentimeter _
+        cdrMeter _
     )
 End Function
 
@@ -231,8 +231,8 @@ Public Sub CreateLabelTexts( _
     ByVal sr As ShapeRange, _
     ByVal nama As String, _
     ByVal productName As String, _
-    ByVal widthCm As Double, _
-    ByVal heightCm As Double, _
+    ByVal widthM As Double, _
+    ByVal heightM As Double, _
     ByVal finishing As String, _
     ByVal quantity As String, _
     ByVal deadline As String, _
@@ -260,8 +260,8 @@ Public Sub CreateLabelTexts( _
     labelText = BuildLabelText( _
         nama, _
         productName, _
-        widthCm, _
-        heightCm, _
+        widthM, _
+        heightM, _
         finishing, _
         quantity, _
         deadline, _
