@@ -23,7 +23,7 @@ Public Sub LoadLabelState(ByVal form As Object)
         mLastProduk = ""
         mLastQuantity = "1"
         mLastFinishing = ""
-        mLastDeadline = Format$(Date, "dd/mm/yyyy")
+        mLastDeadline = GetDefaultDeadline()
         mLastOperator = ""
         mLabelStateLoaded = True
     End If
@@ -102,7 +102,7 @@ Public Sub ClearLabelState(ByVal form As Object)
     mLastProduk = ""
     mLastQuantity = "1"
     mLastFinishing = ""
-    mLastDeadline = Format$(Date, "dd/mm/yyyy")
+    mLastDeadline = GetDefaultDeadline()
     mLastOperator = ""
 
     If form.cmbSystem.ListCount > 0 Then
@@ -112,7 +112,7 @@ Public Sub ClearLabelState(ByVal form As Object)
     form.txtNoInv.Value = ""
     form.txtNama.Value = ""
     form.txtQuantity.Value = "1"
-    form.txtDeadline.Value = Format$(Date, "dd/mm/yyyy")
+    form.txtDeadline.Value = GetDefaultDeadline()
 
     If form.cmbProduk.ListCount > 0 Then
         form.cmbProduk.ListIndex = 0
@@ -143,6 +143,21 @@ Public Function GetShapeHeightM(ByVal shp As Shape) As Double
         ActiveDocument.Unit, _
         cdrMeter _
     )
+End Function
+
+Public Function GetDefaultDeadline() As String
+    Dim deadlineTime As Date
+
+    deadlineTime = DateAdd("h", 1, Now)
+
+    If Minute(deadlineTime) > 0 Then
+        deadlineTime = DateAdd("h", 1, deadlineTime)
+    End If
+
+    deadlineTime = DateValue(deadlineTime) + _
+                   TimeSerial(Hour(deadlineTime), 0, 0)
+
+    GetDefaultDeadline = Format$(deadlineTime, "hh.mm")
 End Function
 
 Public Function CreateLabelCanvas(ByVal sr As ShapeRange) As Shape
@@ -191,7 +206,7 @@ Private Function BuildLabelText( _
     Dim labelDate As String
     Dim prefix As String
 
-    labelDate = Format$(Date, "dd/mm/yyyy")
+    labelDate = Format$(Date, "dd.mm.yyyy")
 
     If StrComp(Trim$(systemName), "Online", vbTextCompare) = 0 Then
         prefix = "ONLINE_"
