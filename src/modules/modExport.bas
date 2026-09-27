@@ -4,6 +4,68 @@ Option Explicit
 Public Sub Plugin_ExportLabel()
     Dim sr As ShapeRange
     Dim shp As Shape
+    Dim i As Long
+    Dim exportedCount As Long
+    Dim failedCount As Long
+    Dim originalCount As Long
+
+    On Error GoTo ErrHandler
+
+    Set sr = ActiveSelectionRange
+    originalCount = sr.Count
+
+    If originalCount = 0 Then
+        MsgBox "Pilih minimal satu group label terlebih dahulu.", _
+               vbExclamation, _
+               "MgoCorel"
+        Exit Sub
+    End If
+
+    For i = 1 To sr.Count
+        Set shp = sr(i)
+
+        If shp.Type = cdrGroupShape Then
+            If ExportOneLabel(shp) Then
+                exportedCount = exportedCount + 1
+            Else
+                failedCount = failedCount + 1
+            End If
+        Else
+            failedCount = failedCount + 1
+        End If
+    Next i
+
+    On Error Resume Next
+    sr.CreateSelection
+    On Error GoTo 0
+
+    If failedCount = 0 Then
+        MsgBox "Export berhasil." & vbCrLf & vbCrLf & _
+               "Total file : " & exportedCount, _
+               vbInformation, _
+               "MgoCorel"
+    Else
+        MsgBox "Export selesai." & vbCrLf & vbCrLf & _
+               "Berhasil : " & exportedCount & vbCrLf & _
+               "Gagal    : " & failedCount, _
+               vbExclamation, _
+               "MgoCorel"
+    End If
+
+    Exit Sub
+
+ErrHandler:
+    On Error Resume Next
+    sr.CreateSelection
+    On Error GoTo 0
+
+    MsgBox "Gagal export label." & vbCrLf & _
+           "Error " & Err.Number & ": " & Err.Description, _
+           vbCritical, _
+           "MgoCorel"
+End Sub
+
+Private Function ExportOneLabel(ByVal shp As Shape) As Boolean
     Dim exportFolder As String
     Dim yearFolder As String
     Dim monthFolder As String
@@ -34,32 +96,9 @@ Public Sub Plugin_ExportLabel()
 
     On Error GoTo ErrHandler
 
-    Set sr = ActiveSelectionRange
-
-    If sr.Count <> 1 Then
-        MsgBox "Pilih satu group label terlebih dahulu.", _
-               vbExclamation, _
-               "MgoCorel"
-        Exit Sub
-    End If
-
-    Set shp = sr(1)
-
-    If shp.Type <> cdrGroupShape Then
-        MsgBox "Objek yang dipilih bukan group label MgoCorel.", _
-               vbExclamation, _
-               "MgoCorel"
-        Exit Sub
-    End If
-
     labelText = Trim$(shp.Name)
 
-    If labelText = "" Then
-        MsgBox "Group label tidak memiliki nama.", _
-               vbExclamation, _
-               "MgoCorel"
-        Exit Sub
-    End If
+    If labelText = "" Then Exit Function
 
     parts = Split(labelText, "_")
 
@@ -72,12 +111,7 @@ Public Sub Plugin_ExportLabel()
         systemName = ""
     End If
 
-    If UBound(parts) < index + 8 Then
-        MsgBox "Format nama label tidak sesuai.", _
-               vbExclamation, _
-               "MgoCorel"
-        Exit Sub
-    End If
+    If UBound(parts) < index + 8 Then Exit Function
 
     nama = parts(index)
     productName = parts(index + 1)
@@ -113,12 +147,7 @@ Public Sub Plugin_ExportLabel()
 
     exportFolder = Trim$(GetExportFolder())
 
-    If exportFolder = "" Then
-        MsgBox "Export Folder belum diatur.", _
-               vbExclamation, _
-               "MgoCorel"
-        Exit Sub
-    End If
+    If exportFolder = "" Then Exit Function
 
     If Right$(exportFolder, 1) <> "\" Then
         exportFolder = exportFolder & "\"
@@ -203,19 +232,12 @@ Public Sub Plugin_ExportLabel()
         cdrSelection, _
         opt
 
-    MsgBox "Export berhasil." & vbCrLf & vbCrLf & _
-           filePath, _
-           vbInformation, _
-           "MgoCorel"
-
-    Exit Sub
+    ExportOneLabel = True
+    Exit Function
 
 ErrHandler:
-    MsgBox "Gagal export label." & vbCrLf & _
-           "Error " & Err.Number & ": " & Err.Description, _
-           vbCritical, _
-           "MgoCorel"
-End Sub
+    ExportOneLabel = False
+End Function
 
 Private Function GetUniqueFilePath( _
     ByVal folderPath As String, _
