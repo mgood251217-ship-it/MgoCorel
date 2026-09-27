@@ -130,7 +130,7 @@ Public Sub CalculateSelectionPrice(ByVal form As Object)
         total = subtotal
     End If
 
-    total = RoundUp500(total)
+    total = RoundDown500(total)
 
     form.lblHargaMeter.Caption = _
         "Harga / m² : " & FormatRupiah(pricePerM2)
@@ -142,13 +142,13 @@ Public Sub CalculateSelectionPrice(ByVal form As Object)
         "TOTAL : " & FormatRupiah(total)
 End Sub
 
-Private Function RoundUp500(ByVal value As Double) As Double
+Private Function RoundDown500(ByVal value As Double) As Double
     If value <= 0 Then
-        RoundUp500 = 0
+        RoundDown500 = 0
         Exit Function
     End If
 
-    RoundUp500 = Int((value + 499#) / 500#) * 500#
+    RoundDown500 = Int(value / 500#) * 500#
 End Function
 
 Private Function FormatSizeValue(ByVal value As Double) As String
