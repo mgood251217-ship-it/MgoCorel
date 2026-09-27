@@ -5,12 +5,15 @@ Public Sub Plugin_ExportLabel()
     Dim sr As ShapeRange
     Dim shp As Shape
     Dim loading As frmExportLoading
+    Dim options As frmExportOption
     Dim i As Long
     Dim totalCount As Long
     Dim exportedCount As Long
     Dim failedCount As Long
     Dim exportFolder As String
     Dim currentPath As String
+    Dim imageType As Long
+    Dim dpi As Double
 
     On Error GoTo ErrHandler
 
@@ -33,6 +36,21 @@ Public Sub Plugin_ExportLabel()
         Exit Sub
     End If
 
+    Set options = New frmExportOption
+    options.Show vbModal
+
+    If Not options.Confirmed Then
+        Unload options
+        Set options = Nothing
+        Exit Sub
+    End If
+
+    imageType = options.SelectedImageType
+    dpi = options.SelectedDPI
+
+    Unload options
+    Set options = Nothing
+
     Set loading = New frmExportLoading
     loading.Show vbModeless
     loading.SetFolder exportFolder
@@ -54,7 +72,7 @@ Public Sub Plugin_ExportLabel()
                     "Memproses label..."
             End If
 
-            If ExportOneLabel(shp) Then
+            If ExportOneLabel(shp, imageType, dpi) Then
                 exportedCount = exportedCount + 1
             Else
                 failedCount = failedCount + 1
@@ -79,6 +97,8 @@ Public Sub Plugin_ExportLabel()
     If failedCount = 0 Then
         MsgBox "Export berhasil." & vbCrLf & vbCrLf & _
                "Total file : " & exportedCount & vbCrLf & _
+               "Warna      : " & GetImageTypeName(imageType) & vbCrLf & _
+               "DPI        : " & Format$(dpi, "0.##") & vbCrLf & _
                "Folder     : " & exportFolder, _
                vbInformation, _
                "MgoCorel"
@@ -86,6 +106,8 @@ Public Sub Plugin_ExportLabel()
         MsgBox "Export selesai." & vbCrLf & vbCrLf & _
                "Berhasil   : " & exportedCount & vbCrLf & _
                "Gagal      : " & failedCount & vbCrLf & _
+               "Warna      : " & GetImageTypeName(imageType) & vbCrLf & _
+               "DPI        : " & Format$(dpi, "0.##") & vbCrLf & _
                "Folder     : " & exportFolder, _
                vbExclamation, _
                "MgoCorel"
@@ -237,7 +259,18 @@ ErrorHandler:
     GetExportPreviewPath = ""
 End Function
 
-Private Function ExportOneLabel(ByVal shp As Shape) As Boolean
+Private Function GetImageTypeName(ByVal imageType As Long) As String
+    If imageType = cdrCMYKColorImage Then
+        GetImageTypeName = "CMYK"
+    Else
+        GetImageTypeName = "RGB"
+    End If
+End Function
+
+Private Function ExportOneLabel( _
+    ByVal shp As Shape, _
+    ByVal imageType As Long, _
+    ByVal dpi As Double) As Boolean
     Dim exportFolder As String
     Dim yearFolder As String
     Dim monthFolder As String
@@ -374,27 +407,25 @@ Private Function ExportOneLabel(ByVal shp As Shape) As Boolean
 
     shp.CreateSelection
 
-    resolution = 100#
-
     widthPx = CLng(Application.ConvertUnits( _
         shp.SizeWidth, _
         ActiveDocument.Unit, _
         cdrInch _
-    ) * resolution)
+    ) * dpi)
 
     heightPx = CLng(Application.ConvertUnits( _
         shp.SizeHeight, _
         ActiveDocument.Unit, _
         cdrInch _
-    ) * resolution)
+    ) * dpi)
 
     Set opt = New StructExportOptions
 
     opt.AntiAliasingType = cdrNormalAntiAliasing
-    opt.ImageType = cdrRGBColorImage
+    opt.ImageType = imageType
+    opt.ResolutionX = dpi
+    opt.ResolutionY = dpi
     opt.Overwrite = False
-    opt.ResolutionX = resolution
-    opt.ResolutionY = resolution
     opt.SizeX = widthPx
     opt.SizeY = heightPx
 
