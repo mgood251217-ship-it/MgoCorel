@@ -14,6 +14,10 @@ Public Sub Plugin_ExportLabel()
     Dim currentPath As String
     Dim imageType As Long
     Dim dpi As Double
+    Dim actualDpi As Double
+    Dim minExportDpi As Double
+    Dim maxExportDpi As Double
+    Dim adjustedCount As Long
 
     On Error GoTo ErrHandler
 
@@ -72,8 +76,20 @@ Public Sub Plugin_ExportLabel()
                     "Memproses label..."
             End If
 
-            If ExportOneLabel(shp, imageType, dpi) Then
+            If ExportOneLabel(shp, imageType, dpi, actualDpi) Then
                 exportedCount = exportedCount + 1
+
+                If actualDpi < dpi Then
+                    adjustedCount = adjustedCount + 1
+                End If
+
+                If minExportDpi = 0 Or actualDpi < minExportDpi Then
+                    minExportDpi = actualDpi
+                End If
+
+                If actualDpi > maxExportDpi Then
+                    maxExportDpi = actualDpi
+                End If
             Else
                 failedCount = failedCount + 1
             End If
@@ -96,12 +112,14 @@ Public Sub Plugin_ExportLabel()
 
     If failedCount = 0 Then
         MsgBox "Export berhasil." & vbCrLf & vbCrLf & _
-               "Total file : " & exportedCount & vbCrLf & _
-               "Warna      : " & GetImageTypeName(imageType) & vbCrLf & _
-               "DPI        : " & Format$(dpi, "0.##") & vbCrLf & _
-               "Folder     : " & exportFolder, _
-               vbInformation, _
-               "MgoCorel"
+            "Total file : " & exportedCount & vbCrLf & _
+            "Warna      : " & GetImageTypeName(imageType) & vbCrLf & _
+            "DPI pilih  : " & Format$(dpi, "0.##") & vbCrLf & _
+            "DPI export : " & Format$(minExportDpi, "0.##") & vbCrLf & _
+            "Auto turun : " & adjustedCount & " file" & vbCrLf & _
+            "Folder     : " & exportFolder, _
+            vbInformation, _
+            "MgoCorel"
     Else
         MsgBox "Export selesai." & vbCrLf & vbCrLf & _
                "Berhasil   : " & exportedCount & vbCrLf & _
@@ -270,7 +288,9 @@ End Function
 Private Function ExportOneLabel( _
     ByVal shp As Shape, _
     ByVal imageType As Long, _
-    ByVal dpi As Double) As Boolean
+    ByVal dpi As Double, _
+    ByRef actualDpi As Double) As Boolean
+
     Dim exportFolder As String
     Dim yearFolder As String
     Dim monthFolder As String
@@ -295,11 +315,14 @@ Private Function ExportOneLabel( _
     Dim documentDate As Date
     Dim monthNames As Variant
     Dim opt As StructExportOptions
-    Dim widthPx As Long
-    Dim heightPx As Long
-    Dim resolution As Double
+    Dim exportDpi As Double
+    Dim widthInch As Double
+    Dim heightInch As Double
+    Dim maxPixels As Double
 
     On Error GoTo ErrHandler
+
+    actualDpi = 0
 
     labelText = Trim$(shp.Name)
 
@@ -407,27 +430,52 @@ Private Function ExportOneLabel( _
 
     shp.CreateSelection
 
-    widthPx = CLng(Application.ConvertUnits( _
+    If dpi <= 0 Then
+        dpi = 100#
+    End If
+
+    exportDpi = dpi
+    maxPixels = 30000#
+
+    widthInch = Application.ConvertUnits( _
         shp.SizeWidth, _
         ActiveDocument.Unit, _
         cdrInch _
-    ) * dpi)
+    )
 
-    heightPx = CLng(Application.ConvertUnits( _
+    heightInch = Application.ConvertUnits( _
         shp.SizeHeight, _
         ActiveDocument.Unit, _
         cdrInch _
-    ) * dpi)
+    )
+
+    If widthInch > 0 Then
+        If widthInch * exportDpi > maxPixels Then
+            exportDpi = maxPixels / widthInch
+        End If
+    End If
+
+    If heightInch > 0 Then
+        If heightInch * exportDpi > maxPixels Then
+            exportDpi = maxPixels / heightInch
+        End If
+    End If
+
+    If exportDpi < 25# Then
+        exportDpi = 25#
+    Else
+        exportDpi = Int(exportDpi)
+    End If
+
+    actualDpi = exportDpi
 
     Set opt = New StructExportOptions
 
     opt.AntiAliasingType = cdrNormalAntiAliasing
     opt.ImageType = imageType
-    opt.ResolutionX = dpi
-    opt.ResolutionY = dpi
     opt.Overwrite = False
-    opt.SizeX = widthPx
-    opt.SizeY = heightPx
+    opt.ResolutionX = exportDpi
+    opt.ResolutionY = exportDpi
 
     ActiveDocument.Export _
         filePath, _
@@ -436,9 +484,11 @@ Private Function ExportOneLabel( _
         opt
 
     ExportOneLabel = True
+
     Exit Function
 
 ErrHandler:
+    actualDpi = 0
     ExportOneLabel = False
 End Function
 
