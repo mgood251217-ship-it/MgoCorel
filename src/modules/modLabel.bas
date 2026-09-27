@@ -191,6 +191,44 @@ Public Function CreateLabelCanvas(ByVal sr As ShapeRange) As Shape
     Set CreateLabelCanvas = canvas
 End Function
 
+Private Sub ApplyLabelTextColor( _
+    ByVal label As Shape, _
+    ByVal systemName As String, _
+    ByVal nama As String, _
+    ByVal invoiceNumber As String)
+
+    Dim labelText As String
+    Dim labelLength As Long
+    Dim namaLength As Long
+    Dim invoiceLength As Long
+    Dim invoiceStart As Long
+
+    labelText = label.Text.Story.Text
+    labelLength = Len(labelText)
+    namaLength = Len(Trim$(nama))
+    invoiceLength = Len(Trim$(invoiceNumber))
+
+    If labelLength <= 0 Then Exit Sub
+
+    If StrComp(Trim$(systemName), "Online", vbTextCompare) = 0 Then
+        label.Text.Range(0, labelLength).Fill.UniformColor.RGBAssign 255, 0, 0
+        Exit Sub
+    End If
+
+    If namaLength > 0 Then
+        label.Text.Range(0, namaLength).Fill.UniformColor.RGBAssign 255, 0, 0
+    End If
+
+    If invoiceLength > 0 Then
+        invoiceStart = labelLength - invoiceLength
+
+        label.Text.Range( _
+            invoiceStart, _
+            labelLength _
+        ).Fill.UniformColor.RGBAssign 255, 0, 0
+    End If
+End Sub
+
 Private Function BuildLabelText( _
     ByVal systemName As String, _
     ByVal nama As String, _
@@ -231,6 +269,9 @@ End Function
 
 Private Function CreateOneLabelText( _
     ByVal labelText As String, _
+    ByVal systemName As String, _
+    ByVal nama As String, _
+    ByVal invoiceNumber As String, _
     ByVal centerX As Double, _
     ByVal centerY As Double, _
     ByVal rotation As Double) As Shape
@@ -262,6 +303,12 @@ Private Function CreateOneLabelText( _
         cdrMixedFontLine, _
         cdrCenterAlignment _
     )
+
+    ApplyLabelTextColor _
+        label, _
+        systemName, _
+        nama, _
+        invoiceNumber
 
     label.CenterX = centerX
     label.CenterY = centerY
@@ -322,6 +369,9 @@ Public Sub CreateLabelTexts( _
     If sr.SizeHeight >= sr.SizeWidth Then
         Set labelTop = CreateOneLabelText( _
             labelText, _
+            systemName, _
+            nama, _
+            invoiceNumber, _
             sr.CenterX, _
             sr.TopY + labelCenter, _
             0 _
@@ -329,6 +379,9 @@ Public Sub CreateLabelTexts( _
 
         Set labelBottom = CreateOneLabelText( _
             labelText, _
+            systemName, _
+            nama, _
+            invoiceNumber, _
             sr.CenterX, _
             sr.BottomY - labelCenter, _
             0 _
@@ -336,6 +389,9 @@ Public Sub CreateLabelTexts( _
     Else
         Set labelLeft = CreateOneLabelText( _
             labelText, _
+            systemName, _
+            nama, _
+            invoiceNumber, _
             sr.LeftX - labelCenter, _
             sr.CenterY, _
             90 _
@@ -343,6 +399,9 @@ Public Sub CreateLabelTexts( _
 
         Set labelRight = CreateOneLabelText( _
             labelText, _
+            systemName, _
+            nama, _
+            invoiceNumber, _
             sr.RightX + labelCenter, _
             sr.CenterY, _
             270 _
