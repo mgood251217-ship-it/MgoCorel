@@ -1,8 +1,113 @@
 Attribute VB_Name = "modLabel"
 Option Explicit
 
+Private mLabelStateLoaded As Boolean
+Private mLastNoInv As String
+Private mLastNama As String
+Private mLastProduk As String
+Private mLastQuantity As String
+Private mLastFinishing As String
+Private mLastDeadline As String
+Private mLastOperator As String
+
 Public Sub Plugin_ShowLabelForm()
     frmLabel.Show
+End Sub
+
+Public Sub LoadLabelState(ByVal form As Object)
+    If Not mLabelStateLoaded Then
+        mLastNoInv = ""
+        mLastNama = ""
+        mLastProduk = ""
+        mLastQuantity = "1"
+        mLastFinishing = ""
+        mLastDeadline = Format$(Date, "dd/mm/yyyy")
+        mLastOperator = ""
+        mLabelStateLoaded = True
+    End If
+
+    form.txtNoInv.value = mLastNoInv
+    form.txtNama.value = mLastNama
+    form.txtQuantity.value = mLastQuantity
+    form.txtDeadline.value = mLastDeadline
+
+    If form.cmbProduk.ListCount > 0 Then
+        If mLastProduk <> "" Then
+            form.cmbProduk.value = mLastProduk
+            If form.cmbProduk.ListIndex = -1 Then
+                form.cmbProduk.ListIndex = 0
+            End If
+        Else
+            form.cmbProduk.ListIndex = 0
+        End If
+    End If
+
+    If form.cmbFinishing.ListCount > 0 Then
+        If mLastFinishing <> "" Then
+            form.cmbFinishing.value = mLastFinishing
+            If form.cmbFinishing.ListIndex = -1 Then
+                form.cmbFinishing.ListIndex = 0
+            End If
+        Else
+            form.cmbFinishing.ListIndex = 0
+        End If
+    End If
+
+    If form.cmbOperator.ListCount > 0 Then
+        If mLastOperator <> "" Then
+            form.cmbOperator.value = mLastOperator
+            If form.cmbOperator.ListIndex = -1 Then
+                form.cmbOperator.ListIndex = 0
+            End If
+        Else
+            form.cmbOperator.ListIndex = 0
+        End If
+    End If
+End Sub
+
+Public Sub SaveLabelState(ByVal form As Object)
+    mLastNoInv = Trim$(form.txtNoInv.value)
+    mLastNama = Trim$(form.txtNama.value)
+    mLastProduk = Trim$(form.cmbProduk.value)
+    mLastQuantity = Trim$(form.txtQuantity.value)
+    mLastFinishing = Trim$(form.cmbFinishing.value)
+    mLastDeadline = Trim$(form.txtDeadline.value)
+    mLastOperator = Trim$(form.cmbOperator.value)
+
+    If mLastQuantity = "" Then
+        mLastQuantity = "1"
+    End If
+
+    mLabelStateLoaded = True
+End Sub
+
+Public Sub ClearLabelState(ByVal form As Object)
+    mLastNoInv = ""
+    mLastNama = ""
+    mLastProduk = ""
+    mLastQuantity = "1"
+    mLastFinishing = ""
+    mLastDeadline = Format$(Date, "dd/mm/yyyy")
+    mLastOperator = ""
+
+    form.txtNoInv.value = ""
+    form.txtNama.value = ""
+    form.txtQuantity.value = "1"
+    form.txtDeadline.value = Format$(Date, "dd/mm/yyyy")
+
+    If form.cmbProduk.ListCount > 0 Then
+        form.cmbProduk.ListIndex = 0
+    End If
+
+    If form.cmbFinishing.ListCount > 0 Then
+        form.cmbFinishing.ListIndex = 0
+    End If
+
+    If form.cmbOperator.ListCount > 0 Then
+        form.cmbOperator.ListIndex = 0
+    End If
+
+    mLabelStateLoaded = True
 End Sub
 
 Public Function GetShapeWidthCm(ByVal shp As Shape) As Double

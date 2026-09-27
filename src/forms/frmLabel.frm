@@ -20,9 +20,7 @@ Private Sub UserForm_Initialize()
     LoadProducts
     LoadFinishings
     LoadOperators
-
-    txtQuantity.Value = "1"
-    txtDeadline.Value = Format$(Date, "dd/mm/yyyy")
+    LoadLabelState Me
 End Sub
 
 Private Sub LoadProducts()
@@ -63,13 +61,13 @@ Private Sub cmdSimpan_Click()
     Dim widthCm As Double
     Dim heightCm As Double
 
-    If Trim$(txtNoInv.Value) = "" Then
+    If Trim$(txtNoInv.value) = "" Then
         MsgBox "No Inv wajib diisi.", vbExclamation, "MgoCorel"
         txtNoInv.SetFocus
         Exit Sub
     End If
 
-    If Trim$(txtNama.Value) = "" Then
+    If Trim$(txtNama.value) = "" Then
         MsgBox "Nama wajib diisi.", vbExclamation, "MgoCorel"
         txtNama.SetFocus
         Exit Sub
@@ -80,6 +78,8 @@ Private Sub cmdSimpan_Click()
         cmbProduk.SetFocus
         Exit Sub
     End If
+    
+    SaveLabelState Me
 
     Set sr = ActiveSelectionRange
 
@@ -94,13 +94,13 @@ Private Sub cmdSimpan_Click()
         Exit Sub
     End If
 
-    If Val(txtQuantity.Value) <= 0 Then
+    If Val(txtQuantity.value) <= 0 Then
         MsgBox "Quantity harus lebih dari 0.", vbExclamation, "MgoCorel"
         txtQuantity.SetFocus
         Exit Sub
     End If
 
-    If Trim$(txtDeadline.Value) = "" Then
+    If Trim$(txtDeadline.value) = "" Then
         MsgBox "Deadline wajib diisi.", vbExclamation, "MgoCorel"
         txtDeadline.SetFocus
         Exit Sub
@@ -125,20 +125,25 @@ Private Sub cmdSimpan_Click()
 
         CreateLabelTexts _
             oneShape, _
-            txtNama.Value, _
-            cmbProduk.Value, _
+            txtNama.value, _
+            cmbProduk.value, _
             widthCm, _
             heightCm, _
-            cmbFinishing.Value, _
-            txtQuantity.Value, _
-            txtDeadline.Value, _
-            cmbOperator.Value, _
-            txtNoInv.Value
+            cmbFinishing.value, _
+            txtQuantity.value, _
+            txtDeadline.value, _
+            cmbOperator.value, _
+            txtNoInv.value
     Next i
 
     Unload Me
 End Sub
 
+Private Sub cmdClear_Click()
+    ClearLabelState Me
+End Sub
+
 Private Sub cmdBatal_Click()
+    SaveLabelState Me
     Unload Me
 End Sub
