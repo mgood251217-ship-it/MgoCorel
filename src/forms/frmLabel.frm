@@ -64,6 +64,8 @@ Private Sub cmdSimpan_Click()
     Dim sr As ShapeRange
     Dim oneShape As ShapeRange
     Dim shp As Shape
+    Dim canvas As Shape
+    Dim labelGroup As Shape
     Dim i As Long
     Dim widthM As Double
     Dim heightM As Double
@@ -134,10 +136,11 @@ Private Sub cmdSimpan_Click()
         Set oneShape = CreateShapeRange
         oneShape.Add shp
 
-        CreateLabelCanvas oneShape
+        Set canvas = CreateLabelCanvas(oneShape)
 
-        CreateLabelTexts _
+        Set labelGroup = CreateLabelTexts( _
             oneShape, _
+            canvas, _
             cmbSystem.Value, _
             txtNama.Value, _
             cmbProduk.Value, _
@@ -147,7 +150,8 @@ Private Sub cmdSimpan_Click()
             txtQuantity.Value, _
             txtDeadline.Value, _
             cmbOperator.Value, _
-            txtNoInv.Value
+            txtNoInv.Value _
+        )
     Next i
 
     Unload Me

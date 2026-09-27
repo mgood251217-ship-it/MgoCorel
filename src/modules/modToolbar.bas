@@ -83,6 +83,20 @@ Public Sub Plugin_CreateToolbar()
         btn.SetIcon2 iconPath
     End If
 
+    Set btn = cb.Controls.AddCustomButton( _
+        cdrCmdCategoryMacros, _
+        "MgoCorel.modExport.Plugin_ExportLabel" _
+    )
+
+    btn.Caption = "Export Label"
+    btn.ToolTipText = "Export Label"
+    btn.DescriptionText = "Export label yang dipilih"
+
+    iconPath = Application.GMSManager.UserGMSPath & "icons\export.ico"
+    If Dir$(iconPath) <> "" Then
+        btn.SetIcon2 iconPath
+    End If
+
     cb.Visible = True
 
     Set btn = Nothing

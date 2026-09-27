@@ -259,7 +259,7 @@ Private Function BuildLabelText( _
         Format$(widthM, "0.##") & "X" & _
         Format$(heightM, "0.##") & "_" & _
         Trim$(finishing) & "_" & _
-        Trim$(quantity) & "_" & _
+        Trim$(quantity) & "PCS_" & _
         Trim$(deadline) & "_" & _
         labelDate & "_" & _
         Trim$(operatorName) & "_" & _
@@ -322,8 +322,9 @@ Private Function CreateOneLabelText( _
     Set CreateOneLabelText = label
 End Function
 
-Public Sub CreateLabelTexts( _
+Public Function CreateLabelTexts( _
     ByVal sr As ShapeRange, _
+    ByVal canvas As Shape, _
     ByVal systemName As String, _
     ByVal nama As String, _
     ByVal productName As String, _
@@ -333,7 +334,7 @@ Public Sub CreateLabelTexts( _
     ByVal quantity As String, _
     ByVal deadline As String, _
     ByVal operatorName As String, _
-    ByVal invoiceNumber As String)
+    ByVal invoiceNumber As String) As Shape
 
     Dim extraDoc As Double
     Dim stripDoc As Double
@@ -343,6 +344,8 @@ Public Sub CreateLabelTexts( _
     Dim labelBottom As Shape
     Dim labelLeft As Shape
     Dim labelRight As Shape
+    Dim groupRange As ShapeRange
+    Dim groupShape As Shape
 
     extraDoc = Application.ConvertUnits( _
         GetCanvasExtra(), _
@@ -407,4 +410,30 @@ Public Sub CreateLabelTexts( _
             270 _
         )
     End If
-End Sub
+
+    Set groupRange = CreateShapeRange
+    groupRange.AddRange sr
+    groupRange.Add canvas
+
+    If Not labelTop Is Nothing Then
+        groupRange.Add labelTop
+    End If
+
+    If Not labelBottom Is Nothing Then
+        groupRange.Add labelBottom
+    End If
+
+    If Not labelLeft Is Nothing Then
+        groupRange.Add labelLeft
+    End If
+
+    If Not labelRight Is Nothing Then
+        groupRange.Add labelRight
+    End If
+
+    Set groupShape = groupRange.Group
+
+    groupShape.Name = labelText
+
+    Set CreateLabelTexts = groupShape
+End Function
