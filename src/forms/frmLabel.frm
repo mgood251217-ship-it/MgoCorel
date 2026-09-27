@@ -78,8 +78,6 @@ Private Sub cmdSimpan_Click()
         cmbProduk.SetFocus
         Exit Sub
     End If
-    
-    SaveLabelState Me
 
     Set sr = ActiveSelectionRange
 
@@ -112,11 +110,13 @@ Private Sub cmdSimpan_Click()
         Exit Sub
     End If
 
+    SaveLabelState Me
+
     For i = 1 To sr.Count
         Set shp = sr(i)
 
-    widthM = GetShapeWidthM(shp)
-    heightM = GetShapeHeightM(shp)
+        widthM = GetShapeWidthM(shp)
+        heightM = GetShapeHeightM(shp)
 
         Set oneShape = CreateShapeRange
         oneShape.Add shp

@@ -57,6 +57,19 @@ Public Sub Plugin_CreateToolbar()
         btn.SetIcon2 iconPath
     End If
 
+    Set btn = cb.Controls.AddCustomButton( _
+        cdrCmdCategoryMacros, _
+        "MgoCorel.modHitung.Plugin_ShowHitungForm" _
+    )
+    btn.Caption = "Hitung Harga"
+    btn.ToolTipText = "Hitung Harga"
+    btn.DescriptionText = "Menghitung harga objek yang dipilih"
+
+    iconPath = Application.GMSManager.UserGMSPath & "icons\calculator.ico"
+    If Dir$(iconPath) <> "" Then
+        btn.SetIcon2 iconPath
+    End If
+
     cb.Visible = True
 
     Set btn = Nothing
