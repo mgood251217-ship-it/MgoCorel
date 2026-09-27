@@ -70,6 +70,19 @@ Public Sub Plugin_CreateToolbar()
         btn.SetIcon2 iconPath
     End If
 
+    Set btn = cb.Controls.AddCustomButton( _
+        cdrCmdCategoryMacros, _
+        "MgoCorel.modSusun.Plugin_ShowSusunForm" _
+    )
+    btn.Caption = "Susun Objek"
+    btn.ToolTipText = "Susun Objek"
+    btn.DescriptionText = "Menyusun objek sebanyak mungkin"
+
+    iconPath = Application.GMSManager.UserGMSPath & "icons\susun.ico"
+    If Dir$(iconPath) <> "" Then
+        btn.SetIcon2 iconPath
+    End If
+
     cb.Visible = True
 
     Set btn = Nothing
