@@ -431,9 +431,189 @@ Public Function CreateLabelTexts( _
         groupRange.Add labelRight
     End If
 
+    If StrComp(Trim$(finishing), "SESTAND", vbTextCompare) = 0 Or _
+       StrComp(Trim$(finishing), "MATIK", vbTextCompare) = 0 Then
+
+        AddFinishingDots groupRange, sr, canvas
+    End If
+
     Set groupShape = groupRange.Group
 
     groupShape.Name = labelText
 
     Set CreateLabelTexts = groupShape
 End Function
+
+Private Sub AddFinishingDots( _
+    ByVal groupRange As ShapeRange, _
+    ByVal sr As ShapeRange, _
+    ByVal canvas As Shape)
+
+    Dim dotDiameterDoc As Double
+    Dim dotRadiusDoc As Double
+    Dim insetDoc As Double
+    Dim widthM As Double
+    Dim heightM As Double
+    Dim widthDoc As Double
+    Dim heightDoc As Double
+    Dim horizontalSegments As Long
+    Dim verticalSegments As Long
+    Dim i As Long
+    Dim x As Double
+    Dim y As Double
+    Dim stepX As Double
+    Dim stepY As Double
+    Dim dot As Shape
+
+    dotDiameterDoc = Application.ConvertUnits( _
+        1#, _
+        cdrCentimeter, _
+        ActiveDocument.Unit _
+    )
+
+    dotRadiusDoc = dotDiameterDoc / 2#
+
+    insetDoc = Application.ConvertUnits( _
+        1.25, _
+        cdrCentimeter, _
+        ActiveDocument.Unit _
+    )
+
+    widthDoc = sr.SizeWidth
+    heightDoc = sr.SizeHeight
+
+    widthM = Application.ConvertUnits( _
+        widthDoc, _
+        ActiveDocument.Unit, _
+        cdrMeter _
+    )
+
+    heightM = Application.ConvertUnits( _
+        heightDoc, _
+        ActiveDocument.Unit, _
+        cdrMeter _
+    )
+
+    horizontalSegments = Int(widthM)
+
+    If widthM > horizontalSegments Then
+        horizontalSegments = horizontalSegments + 1
+    End If
+
+    verticalSegments = Int(heightM)
+
+    If heightM > verticalSegments Then
+        verticalSegments = verticalSegments + 1
+    End If
+
+    If horizontalSegments < 1 Then
+        horizontalSegments = 1
+    End If
+
+    If verticalSegments < 1 Then
+        verticalSegments = 1
+    End If
+
+    stepX = widthDoc / horizontalSegments
+    stepY = heightDoc / verticalSegments
+
+    Set dot = ActiveLayer.CreateEllipse2( _
+        canvas.LeftX + insetDoc, _
+        canvas.TopY - insetDoc, _
+        dotRadiusDoc, _
+        dotRadiusDoc _
+    )
+
+    dot.Fill.UniformColor.RGBAssign 255, 0, 0
+    dot.Outline.SetNoOutline
+    groupRange.Add dot
+
+    Set dot = ActiveLayer.CreateEllipse2( _
+        canvas.RightX - insetDoc, _
+        canvas.TopY - insetDoc, _
+        dotRadiusDoc, _
+        dotRadiusDoc _
+    )
+
+    dot.Fill.UniformColor.RGBAssign 255, 0, 0
+    dot.Outline.SetNoOutline
+    groupRange.Add dot
+
+    Set dot = ActiveLayer.CreateEllipse2( _
+        canvas.LeftX + insetDoc, _
+        canvas.BottomY + insetDoc, _
+        dotRadiusDoc, _
+        dotRadiusDoc _
+    )
+
+    dot.Fill.UniformColor.RGBAssign 255, 0, 0
+    dot.Outline.SetNoOutline
+    groupRange.Add dot
+
+    Set dot = ActiveLayer.CreateEllipse2( _
+        canvas.RightX - insetDoc, _
+        canvas.BottomY + insetDoc, _
+        dotRadiusDoc, _
+        dotRadiusDoc _
+    )
+
+    dot.Fill.UniformColor.RGBAssign 255, 0, 0
+    dot.Outline.SetNoOutline
+    groupRange.Add dot
+
+    If horizontalSegments > 1 Then
+        For i = 1 To horizontalSegments - 1
+            x = sr.LeftX + (stepX * i)
+
+            Set dot = ActiveLayer.CreateEllipse2( _
+                x, _
+                canvas.TopY - insetDoc, _
+                dotRadiusDoc, _
+                dotRadiusDoc _
+            )
+
+            dot.Fill.UniformColor.RGBAssign 255, 0, 0
+            dot.Outline.SetNoOutline
+            groupRange.Add dot
+
+            Set dot = ActiveLayer.CreateEllipse2( _
+                x, _
+                canvas.BottomY + insetDoc, _
+                dotRadiusDoc, _
+                dotRadiusDoc _
+            )
+
+            dot.Fill.UniformColor.RGBAssign 255, 0, 0
+            dot.Outline.SetNoOutline
+            groupRange.Add dot
+        Next i
+    End If
+
+    If verticalSegments > 1 Then
+        For i = 1 To verticalSegments - 1
+            y = sr.TopY - (stepY * i)
+
+            Set dot = ActiveLayer.CreateEllipse2( _
+                canvas.LeftX + insetDoc, _
+                y, _
+                dotRadiusDoc, _
+                dotRadiusDoc _
+            )
+
+            dot.Fill.UniformColor.RGBAssign 255, 0, 0
+            dot.Outline.SetNoOutline
+            groupRange.Add dot
+
+            Set dot = ActiveLayer.CreateEllipse2( _
+                canvas.RightX - insetDoc, _
+                y, _
+                dotRadiusDoc, _
+                dotRadiusDoc _
+            )
+
+            dot.Fill.UniformColor.RGBAssign 255, 0, 0
+            dot.Outline.SetNoOutline
+            groupRange.Add dot
+        Next i
+    End If
+End Sub

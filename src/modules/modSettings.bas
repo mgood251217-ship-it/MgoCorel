@@ -522,15 +522,16 @@ Private Sub CreateDefaultSettings()
     Set mFinishings = New Collection
     Set mOperators = New Collection
 
-    mProducts.Add Array("Jersey", 0)
+    mProducts.Add Array("FX250", 0)
+    mProducts.Add Array("FX300", 0)
 
-    mFinishings.Add Array("Tanfis", 0)
-    mFinishings.Add Array("Potpass", 0)
-    mFinishings.Add Array("Simming", 0)
     mFinishings.Add Array("STD", 0)
-    mFinishings.Add Array("Sentand", 0)
+    mFinishings.Add Array("POTPASS", 0)
+    mFinishings.Add Array("SIMMING", 0)
+    mFinishings.Add Array("TANFIS", 0)
+    mFinishings.Add Array("SESTAND", 0)
 
-    mOperators.Add "Operator 1"
+    mOperators.Add "VI"
 
     mOutputFolder = ""
     mExportFolder = ""
