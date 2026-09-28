@@ -334,7 +334,11 @@ Public Function CreateLabelTexts( _
     ByVal quantity As String, _
     ByVal deadline As String, _
     ByVal operatorName As String, _
-    ByVal invoiceNumber As String) As Shape
+    ByVal invoiceNumber As String, _
+    ByVal dotsTop As Long, _
+    ByVal dotsBottom As Long, _
+    ByVal dotsLeft As Long, _
+    ByVal dotsRight As Long) As Shape
 
     Dim extraDoc As Double
     Dim stripDoc As Double
@@ -434,7 +438,14 @@ Public Function CreateLabelTexts( _
     If StrComp(Trim$(finishing), "SESTAND", vbTextCompare) = 0 Or _
        StrComp(Trim$(finishing), "MATIK", vbTextCompare) = 0 Then
 
-        AddFinishingDots groupRange, sr, canvas
+        AddFinishingDots _
+            groupRange, _
+            sr, _
+            canvas, _
+            dotsTop, _
+            dotsBottom, _
+            dotsLeft, _
+            dotsRight
     End If
 
     Set groupShape = groupRange.Group
@@ -447,22 +458,24 @@ End Function
 Private Sub AddFinishingDots( _
     ByVal groupRange As ShapeRange, _
     ByVal sr As ShapeRange, _
-    ByVal canvas As Shape)
+    ByVal canvas As Shape, _
+    ByVal dotsTop As Long, _
+    ByVal dotsBottom As Long, _
+    ByVal dotsLeft As Long, _
+    ByVal dotsRight As Long)
 
     Dim dotDiameterDoc As Double
     Dim dotRadiusDoc As Double
     Dim insetDoc As Double
-    Dim widthM As Double
-    Dim heightM As Double
-    Dim widthDoc As Double
-    Dim heightDoc As Double
-    Dim horizontalSegments As Long
-    Dim verticalSegments As Long
+    Dim topY As Double
+    Dim bottomY As Double
+    Dim leftX As Double
+    Dim rightX As Double
+    Dim availableWidth As Double
+    Dim availableHeight As Double
     Dim i As Long
     Dim x As Double
     Dim y As Double
-    Dim stepX As Double
-    Dim stepY As Double
     Dim dot As Shape
 
     dotDiameterDoc = Application.ConvertUnits( _
@@ -479,95 +492,21 @@ Private Sub AddFinishingDots( _
         ActiveDocument.Unit _
     )
 
-    widthDoc = sr.SizeWidth
-    heightDoc = sr.SizeHeight
+    leftX = canvas.LeftX + insetDoc
+    rightX = canvas.RightX - insetDoc
+    topY = canvas.TopY - insetDoc
+    bottomY = canvas.BottomY + insetDoc
 
-    widthM = Application.ConvertUnits( _
-        widthDoc, _
-        ActiveDocument.Unit, _
-        cdrMeter _
-    )
+    availableWidth = rightX - leftX
+    availableHeight = topY - bottomY
 
-    heightM = Application.ConvertUnits( _
-        heightDoc, _
-        ActiveDocument.Unit, _
-        cdrMeter _
-    )
-
-    horizontalSegments = Int(widthM)
-
-    If widthM > horizontalSegments Then
-        horizontalSegments = horizontalSegments + 1
-    End If
-
-    verticalSegments = Int(heightM)
-
-    If heightM > verticalSegments Then
-        verticalSegments = verticalSegments + 1
-    End If
-
-    If horizontalSegments < 1 Then
-        horizontalSegments = 1
-    End If
-
-    If verticalSegments < 1 Then
-        verticalSegments = 1
-    End If
-
-    stepX = widthDoc / horizontalSegments
-    stepY = heightDoc / verticalSegments
-
-    Set dot = ActiveLayer.CreateEllipse2( _
-        canvas.LeftX + insetDoc, _
-        canvas.TopY - insetDoc, _
-        dotRadiusDoc, _
-        dotRadiusDoc _
-    )
-
-    dot.Fill.UniformColor.RGBAssign 255, 0, 0
-    dot.Outline.SetNoOutline
-    groupRange.Add dot
-
-    Set dot = ActiveLayer.CreateEllipse2( _
-        canvas.RightX - insetDoc, _
-        canvas.TopY - insetDoc, _
-        dotRadiusDoc, _
-        dotRadiusDoc _
-    )
-
-    dot.Fill.UniformColor.RGBAssign 255, 0, 0
-    dot.Outline.SetNoOutline
-    groupRange.Add dot
-
-    Set dot = ActiveLayer.CreateEllipse2( _
-        canvas.LeftX + insetDoc, _
-        canvas.BottomY + insetDoc, _
-        dotRadiusDoc, _
-        dotRadiusDoc _
-    )
-
-    dot.Fill.UniformColor.RGBAssign 255, 0, 0
-    dot.Outline.SetNoOutline
-    groupRange.Add dot
-
-    Set dot = ActiveLayer.CreateEllipse2( _
-        canvas.RightX - insetDoc, _
-        canvas.BottomY + insetDoc, _
-        dotRadiusDoc, _
-        dotRadiusDoc _
-    )
-
-    dot.Fill.UniformColor.RGBAssign 255, 0, 0
-    dot.Outline.SetNoOutline
-    groupRange.Add dot
-
-    If horizontalSegments > 1 Then
-        For i = 1 To horizontalSegments - 1
-            x = sr.LeftX + (stepX * i)
+    If dotsTop > 0 Then
+        If dotsTop = 1 Then
+            x = (leftX + rightX) / 2#
 
             Set dot = ActiveLayer.CreateEllipse2( _
                 x, _
-                canvas.TopY - insetDoc, _
+                topY, _
                 dotRadiusDoc, _
                 dotRadiusDoc _
             )
@@ -575,10 +514,32 @@ Private Sub AddFinishingDots( _
             dot.Fill.UniformColor.RGBAssign 255, 0, 0
             dot.Outline.SetNoOutline
             groupRange.Add dot
+        Else
+            For i = 0 To dotsTop - 1
+                x = leftX + _
+                    (availableWidth * i / (dotsTop - 1))
+
+                Set dot = ActiveLayer.CreateEllipse2( _
+                    x, _
+                    topY, _
+                    dotRadiusDoc, _
+                    dotRadiusDoc _
+                )
+
+                dot.Fill.UniformColor.RGBAssign 255, 0, 0
+                dot.Outline.SetNoOutline
+                groupRange.Add dot
+            Next i
+        End If
+    End If
+
+    If dotsBottom > 0 Then
+        If dotsBottom = 1 Then
+            x = (leftX + rightX) / 2#
 
             Set dot = ActiveLayer.CreateEllipse2( _
                 x, _
-                canvas.BottomY + insetDoc, _
+                bottomY, _
                 dotRadiusDoc, _
                 dotRadiusDoc _
             )
@@ -586,15 +547,31 @@ Private Sub AddFinishingDots( _
             dot.Fill.UniformColor.RGBAssign 255, 0, 0
             dot.Outline.SetNoOutline
             groupRange.Add dot
-        Next i
+        Else
+            For i = 0 To dotsBottom - 1
+                x = leftX + _
+                    (availableWidth * i / (dotsBottom - 1))
+
+                Set dot = ActiveLayer.CreateEllipse2( _
+                    x, _
+                    bottomY, _
+                    dotRadiusDoc, _
+                    dotRadiusDoc _
+                )
+
+                dot.Fill.UniformColor.RGBAssign 255, 0, 0
+                dot.Outline.SetNoOutline
+                groupRange.Add dot
+            Next i
+        End If
     End If
 
-    If verticalSegments > 1 Then
-        For i = 1 To verticalSegments - 1
-            y = sr.TopY - (stepY * i)
+    If dotsLeft > 0 Then
+        If dotsLeft = 1 Then
+            y = (bottomY + topY) / 2#
 
             Set dot = ActiveLayer.CreateEllipse2( _
-                canvas.LeftX + insetDoc, _
+                leftX, _
                 y, _
                 dotRadiusDoc, _
                 dotRadiusDoc _
@@ -603,9 +580,31 @@ Private Sub AddFinishingDots( _
             dot.Fill.UniformColor.RGBAssign 255, 0, 0
             dot.Outline.SetNoOutline
             groupRange.Add dot
+        Else
+            For i = 0 To dotsLeft - 1
+                y = topY - _
+                    (availableHeight * i / (dotsLeft - 1))
+
+                Set dot = ActiveLayer.CreateEllipse2( _
+                    leftX, _
+                    y, _
+                    dotRadiusDoc, _
+                    dotRadiusDoc _
+                )
+
+                dot.Fill.UniformColor.RGBAssign 255, 0, 0
+                dot.Outline.SetNoOutline
+                groupRange.Add dot
+            Next i
+        End If
+    End If
+
+    If dotsRight > 0 Then
+        If dotsRight = 1 Then
+            y = (bottomY + topY) / 2#
 
             Set dot = ActiveLayer.CreateEllipse2( _
-                canvas.RightX - insetDoc, _
+                rightX, _
                 y, _
                 dotRadiusDoc, _
                 dotRadiusDoc _
@@ -614,6 +613,22 @@ Private Sub AddFinishingDots( _
             dot.Fill.UniformColor.RGBAssign 255, 0, 0
             dot.Outline.SetNoOutline
             groupRange.Add dot
-        Next i
+        Else
+            For i = 0 To dotsRight - 1
+                y = topY - _
+                    (availableHeight * i / (dotsRight - 1))
+
+                Set dot = ActiveLayer.CreateEllipse2( _
+                    rightX, _
+                    y, _
+                    dotRadiusDoc, _
+                    dotRadiusDoc _
+                )
+
+                dot.Fill.UniformColor.RGBAssign 255, 0, 0
+                dot.Outline.SetNoOutline
+                groupRange.Add dot
+            Next i
+        End If
     End If
 End Sub
