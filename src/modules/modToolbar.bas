@@ -97,6 +97,20 @@ Public Sub Plugin_CreateToolbar()
         btn.SetIcon2 iconPath
     End If
 
+    Set btn = cb.Controls.AddCustomButton( _
+        cdrCmdCategoryMacros, _
+        "MgoCorel.modImposisi.Plugin_ShowImposisiForm" _
+    )
+
+    btn.Caption = "Imposisi Otomatis"
+    btn.ToolTipText = "Imposisi Otomatis"
+    btn.DescriptionText = "Menyusun objek ke beberapa page secara otomatis"
+
+    iconPath = Application.GMSManager.UserGMSPath & "icons\imposisi.ico"
+    If Dir$(iconPath) <> "" Then
+        btn.SetIcon2 iconPath
+    End If
+
     cb.Visible = True
 
     Set btn = Nothing
