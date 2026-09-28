@@ -125,6 +125,20 @@ Public Sub Plugin_CreateToolbar()
         btn.SetIcon2 iconPath
     End If
 
+    Set btn = cb.Controls.AddCustomButton( _
+        cdrCmdCategoryMacros, _
+        "MgoCorel.modNumbering.Plugin_ShowNumberingForm" _
+    )
+
+    btn.Caption = "Numbering Otomatis"
+    btn.ToolTipText = "Numbering Otomatis"
+    btn.DescriptionText = "Memberi nomor otomatis dan langsung imposisi"
+
+    iconPath = Application.GMSManager.UserGMSPath & "icons\numbering.ico"
+    If Dir$(iconPath) <> "" Then
+        btn.SetIcon2 iconPath
+    End If
+
     cb.Visible = True
 
     Set btn = Nothing
