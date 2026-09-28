@@ -111,6 +111,20 @@ Public Sub Plugin_CreateToolbar()
         btn.SetIcon2 iconPath
     End If
 
+    Set btn = cb.Controls.AddCustomButton( _
+        cdrCmdCategoryMacros, _
+        "MgoCorel.modDuplicate.Plugin_ShowDuplicateForm" _
+    )
+
+    btn.Caption = "Duplicate Quantity"
+    btn.ToolTipText = "Duplicate Quantity"
+    btn.DescriptionText = "Duplikasi quantity dan langsung imposisi otomatis"
+
+    iconPath = Application.GMSManager.UserGMSPath & "icons\duplicate.ico"
+    If Dir$(iconPath) <> "" Then
+        btn.SetIcon2 iconPath
+    End If
+
     cb.Visible = True
 
     Set btn = Nothing
