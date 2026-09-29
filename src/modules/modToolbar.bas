@@ -153,6 +153,20 @@ Public Sub Plugin_CreateToolbar()
         btn.SetIcon2 iconPath
     End If
 
+    Set btn = cb.Controls.AddCustomButton( _
+        cdrCmdCategoryMacros, _
+        "MgoCorel.modRectangleNesting.Plugin_ShowRectangleNestingForm" _
+    )
+
+    btn.Caption = "Rectangle Nesting"
+    btn.ToolTipText = "Rectangle Nesting"
+    btn.DescriptionText = "Menyusun objek semaksimal mungkin ke dalam kotak"
+
+    iconPath = Application.GMSManager.UserGMSPath & "icons\rectangleNesting.ico"
+    If Dir$(iconPath) <> "" Then
+        btn.SetIcon2 iconPath
+    End If
+
     cb.Visible = True
 
     Set btn = Nothing
