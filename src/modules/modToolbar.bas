@@ -139,6 +139,20 @@ Public Sub Plugin_CreateToolbar()
         btn.SetIcon2 iconPath
     End If
 
+    Set btn = cb.Controls.AddCustomButton( _
+        cdrCmdCategoryMacros, _
+        "MgoCorel.modJobBuilder.Plugin_ShowJobBuilderForm" _
+    )
+
+    btn.Caption = "Job Builder"
+    btn.ToolTipText = "Job Builder"
+    btn.DescriptionText = "Membuat output berdasarkan data Excel"
+
+    iconPath = Application.GMSManager.UserGMSPath & "icons\excel.ico"
+    If Dir$(iconPath) <> "" Then
+        btn.SetIcon2 iconPath
+    End If
+
     cb.Visible = True
 
     Set btn = Nothing
