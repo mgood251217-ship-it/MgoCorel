@@ -179,7 +179,7 @@ Private Function GetExportPreviewPath( _
 
     On Error GoTo ErrorHandler
 
-    labelText = Trim$(shp.Name)
+    labelText = GetLabelText(shp)
 
     If labelText = "" Then Exit Function
 
@@ -324,7 +324,7 @@ Private Function ExportOneLabel( _
 
     actualDpi = 0
 
-    labelText = Trim$(shp.Name)
+    labelText = GetLabelText(shp)
 
     If labelText = "" Then Exit Function
 
@@ -609,4 +609,20 @@ Private Function SanitizeFileName(ByVal value As String) As String
     Next item
 
     SanitizeFileName = Trim$(value)
+End Function
+
+Private Function GetLabelText(ByVal shp As Shape) As String
+    Dim value As String
+
+    On Error Resume Next
+
+    value = CStr(shp.Properties("MgoLabelText", 0))
+
+    On Error GoTo 0
+
+    If Trim$(value) <> "" Then
+        GetLabelText = value
+    Else
+        GetLabelText = Trim$(shp.Name)
+    End If
 End Function
