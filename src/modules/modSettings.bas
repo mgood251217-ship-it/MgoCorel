@@ -522,14 +522,20 @@ Private Sub CreateDefaultSettings()
     Set mFinishings = New Collection
     Set mOperators = New Collection
 
-    mProducts.Add Array("FX250", 0)
-    mProducts.Add Array("FX300", 0)
+    mProducts.Add Array("FX250", 16000)
+    mProducts.Add Array("FX300", 22000)
+    mProducts.Add Array("KOREA", 37000)
+    mProducts.Add Array("BACKLITE", 65000)
+    mProducts.Add Array("JERMAN", 80000)
 
     mFinishings.Add Array("STD", 0)
     mFinishings.Add Array("POTPASS", 0)
     mFinishings.Add Array("SIMMING", 0)
     mFinishings.Add Array("TANFIS", 0)
     mFinishings.Add Array("SESTAND", 0)
+    mFinishings.Add Array("MATIK", 0)
+    mFinishings.Add Array("SEL", 0)
+    mFinishings.Add Array("SELMATIK", 0)
 
     mOperators.Add "VI"
 
