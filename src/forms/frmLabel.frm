@@ -1,7 +1,7 @@
 VERSION 5.00
 Begin {C62A69F0-16DC-11CE-9E98-00AA00574A4F} frmLabel 
    Caption         =   "Pelabelan Spanduk"
-   ClientHeight    =   5160
+   ClientHeight    =   5655
    ClientLeft      =   120
    ClientTop       =   465
    ClientWidth     =   4095
@@ -13,12 +13,18 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
+
 Option Explicit
 
 Private mDotsTop As Long
 Private mDotsBottom As Long
 Private mDotsLeft As Long
 Private mDotsRight As Long
+
+Private mCanvasTop As Double
+Private mCanvasBottom As Double
+Private mCanvasLeft As Double
+Private mCanvasRight As Double
 
 Private Sub UserForm_Initialize()
     LoadSystems
@@ -28,7 +34,43 @@ Private Sub UserForm_Initialize()
     LoadLabelState Me
 
     InitializeDotCounts
+    InitializeCanvasCounts
+
     UpdateDotsButton
+End Sub
+
+Private Sub InitializeCanvasCounts()
+    Dim defaultCanvas As Double
+
+    defaultCanvas = GetCanvasExtra() / 2#
+
+    mCanvasTop = defaultCanvas
+    mCanvasBottom = defaultCanvas
+    mCanvasLeft = defaultCanvas
+    mCanvasRight = defaultCanvas
+End Sub
+
+Private Sub cmdAturCanvas_Click()
+    Dim formCanvas As frmCanvas
+
+    Set formCanvas = New frmCanvas
+
+    formCanvas.CanvasTop = mCanvasTop
+    formCanvas.CanvasBottom = mCanvasBottom
+    formCanvas.CanvasLeft = mCanvasLeft
+    formCanvas.CanvasRight = mCanvasRight
+
+    formCanvas.Show vbModal
+
+    If formCanvas.Confirmed Then
+        mCanvasTop = formCanvas.CanvasTop
+        mCanvasBottom = formCanvas.CanvasBottom
+        mCanvasLeft = formCanvas.CanvasLeft
+        mCanvasRight = formCanvas.CanvasRight
+    End If
+
+    Unload formCanvas
+    Set formCanvas = Nothing
 End Sub
 
 Private Sub LoadSystems()
@@ -243,7 +285,13 @@ Private Sub cmdSimpan_Click()
         Set oneShape = CreateShapeRange
         oneShape.Add shp
 
-        Set canvas = CreateLabelCanvas(oneShape)
+        Set canvas = CreateLabelCanvas( _
+            oneShape, _
+            mCanvasTop, _
+            mCanvasBottom, _
+            mCanvasLeft, _
+            mCanvasRight _
+        )
 
         Set labelGroup = CreateLabelTexts( _
             oneShape, _
@@ -261,7 +309,11 @@ Private Sub cmdSimpan_Click()
             dotsTop, _
             dotsBottom, _
             dotsLeft, _
-            dotsRight _
+            dotsRight, _
+            mCanvasTop, _
+            mCanvasBottom, _
+            mCanvasLeft, _
+            mCanvasRight _
         )
     Next i
 

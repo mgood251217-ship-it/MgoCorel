@@ -160,30 +160,69 @@ Public Function GetDefaultDeadline() As String
     GetDefaultDeadline = Format$(deadlineTime, "hh.mm")
 End Function
 
-Public Function CreateLabelCanvas(ByVal sr As ShapeRange) As Shape
-    Dim extraCm As Double
-    Dim extraDoc As Double
+Public Function CreateLabelCanvas( _
+    ByVal sr As ShapeRange, _
+    ByVal canvasTopCm As Double, _
+    ByVal canvasBottomCm As Double, _
+    ByVal canvasLeftCm As Double, _
+    ByVal canvasRightCm As Double) As Shape
+
+    Dim topDoc As Double
+    Dim bottomDoc As Double
+    Dim leftDoc As Double
+    Dim rightDoc As Double
+
     Dim canvasWidth As Double
     Dim canvasHeight As Double
+
     Dim canvas As Shape
 
-    extraCm = GetCanvasExtra()
-
-    extraDoc = Application.ConvertUnits( _
-        extraCm, _
+    topDoc = Application.ConvertUnits( _
+        canvasTopCm, _
         cdrCentimeter, _
         ActiveDocument.Unit _
     )
 
-    canvasWidth = sr.SizeWidth + extraDoc
-    canvasHeight = sr.SizeHeight + extraDoc
+    bottomDoc = Application.ConvertUnits( _
+        canvasBottomCm, _
+        cdrCentimeter, _
+        ActiveDocument.Unit _
+    )
+
+    leftDoc = Application.ConvertUnits( _
+        canvasLeftCm, _
+        cdrCentimeter, _
+        ActiveDocument.Unit _
+    )
+
+    rightDoc = Application.ConvertUnits( _
+        canvasRightCm, _
+        cdrCentimeter, _
+        ActiveDocument.Unit _
+    )
+
+    canvasWidth = _
+        sr.SizeWidth + _
+        leftDoc + _
+        rightDoc
+
+    canvasHeight = _
+        sr.SizeHeight + _
+        topDoc + _
+        bottomDoc
 
     Set canvas = ActiveLayer.CreateRectangle2(0, 0, 1, 1)
 
     canvas.SizeWidth = canvasWidth
     canvas.SizeHeight = canvasHeight
-    canvas.CenterX = sr.CenterX
-    canvas.CenterY = sr.CenterY
+
+    canvas.CenterX = _
+        sr.CenterX + _
+        ((rightDoc - leftDoc) / 2#)
+
+    canvas.CenterY = _
+        sr.CenterY + _
+        ((topDoc - bottomDoc) / 2#)
 
     canvas.Fill.ApplyNoFill
     canvas.OrderToBack
@@ -338,27 +377,49 @@ Public Function CreateLabelTexts( _
     ByVal dotsTop As Long, _
     ByVal dotsBottom As Long, _
     ByVal dotsLeft As Long, _
-    ByVal dotsRight As Long) As Shape
+    ByVal dotsRight As Long, _
+    ByVal canvasTopCm As Double, _
+    ByVal canvasBottomCm As Double, _
+    ByVal canvasLeftCm As Double, _
+    ByVal canvasRightCm As Double) As Shape
 
-    Dim extraDoc As Double
-    Dim stripDoc As Double
-    Dim labelCenter As Double
+    Dim topDoc As Double
+    Dim bottomDoc As Double
+    Dim leftDoc As Double
+    Dim rightDoc As Double
+
     Dim labelText As String
     Dim labelTop As Shape
     Dim labelBottom As Shape
     Dim labelLeft As Shape
     Dim labelRight As Shape
+
     Dim groupRange As ShapeRange
     Dim groupShape As Shape
 
-    extraDoc = Application.ConvertUnits( _
-        GetCanvasExtra(), _
+    topDoc = Application.ConvertUnits( _
+        canvasTopCm, _
         cdrCentimeter, _
         ActiveDocument.Unit _
     )
 
-    stripDoc = extraDoc / 2#
-    labelCenter = stripDoc / 2#
+    bottomDoc = Application.ConvertUnits( _
+        canvasBottomCm, _
+        cdrCentimeter, _
+        ActiveDocument.Unit _
+    )
+
+    leftDoc = Application.ConvertUnits( _
+        canvasLeftCm, _
+        cdrCentimeter, _
+        ActiveDocument.Unit _
+    )
+
+    rightDoc = Application.ConvertUnits( _
+        canvasRightCm, _
+        cdrCentimeter, _
+        ActiveDocument.Unit _
+    )
 
     labelText = BuildLabelText( _
         systemName, _
@@ -374,13 +435,14 @@ Public Function CreateLabelTexts( _
     )
 
     If sr.SizeHeight >= sr.SizeWidth Then
+
         Set labelTop = CreateOneLabelText( _
             labelText, _
             systemName, _
             nama, _
             invoiceNumber, _
             sr.CenterX, _
-            sr.TopY + labelCenter, _
+            sr.TopY + (topDoc / 2#), _
             0 _
         )
 
@@ -390,16 +452,18 @@ Public Function CreateLabelTexts( _
             nama, _
             invoiceNumber, _
             sr.CenterX, _
-            sr.BottomY - labelCenter, _
+            sr.BottomY - (bottomDoc / 2#), _
             0 _
         )
+
     Else
+
         Set labelLeft = CreateOneLabelText( _
             labelText, _
             systemName, _
             nama, _
             invoiceNumber, _
-            sr.LeftX - labelCenter, _
+            sr.LeftX - (leftDoc / 2#), _
             sr.CenterY, _
             90 _
         )
@@ -409,13 +473,15 @@ Public Function CreateLabelTexts( _
             systemName, _
             nama, _
             invoiceNumber, _
-            sr.RightX + labelCenter, _
+            sr.RightX + (rightDoc / 2#), _
             sr.CenterY, _
             270 _
         )
+
     End If
 
     Set groupRange = CreateShapeRange
+
     groupRange.AddRange sr
     groupRange.Add canvas
 
@@ -446,11 +512,16 @@ Public Function CreateLabelTexts( _
             dotsBottom, _
             dotsLeft, _
             dotsRight
+
     End If
 
     Set groupShape = groupRange.Group
 
-    groupShape.Name = labelText
+    groupShape.Name = Left$(labelText, 60)
+
+    On Error Resume Next
+    groupShape.Properties("MgoLabelText", 0) = labelText
+    On Error GoTo 0
 
     Set CreateLabelTexts = groupShape
 End Function
