@@ -3,82 +3,60 @@ Option Explicit
 
 Private Const TOOLBAR_NAME As String = "MgoCorel Tools"
 
+Private Function GetMgoCorelToolbar() As CommandBar
+    Dim i As Long
+    Dim cb As CommandBar
+
+    On Error Resume Next
+
+    For i = 1 To Application.CommandBars.Count
+        Set cb = Nothing
+        Set cb = Application.CommandBars.Item(i)
+
+        If Not cb Is Nothing Then
+            If StrComp(cb.Name, TOOLBAR_NAME, vbTextCompare) = 0 Then
+                Set GetMgoCorelToolbar = cb
+                Exit Function
+            End If
+        End If
+    Next i
+
+    Set GetMgoCorelToolbar = Nothing
+
+    On Error GoTo 0
+End Function
+
 Public Sub Plugin_CreateToolbar()
+
     Dim cb As CommandBar
     Dim btn As Control
     Dim iconPath As String
 
     On Error GoTo ErrHandler
+    Set cb = GetMgoCorelToolbar()
 
-    Plugin_RemoveToolbar
+    If Not cb Is Nothing Then
+        cb.Visible = True
+        Set cb = Nothing
+        Exit Sub
+    End If
 
     Set cb = Application.CommandBars.Add( _
         TOOLBAR_NAME, _
         cuiBarFloating, _
-        False _
+        True _
     )
-
-    Set btn = cb.Controls.AddCustomButton( _
-        cdrCmdCategoryMacros, _
-        "MgoCorel.modMain.Plugin_ShowMainDialog" _
-    )
-    btn.Caption = "Buka Form"
-    btn.ToolTipText = "Buka Main Dialog"
-    btn.DescriptionText = "Buka Main Dialog MgoCorel"
-
-    iconPath = Application.GMSManager.UserGMSPath & "icons\main.ico"
-    If Dir$(iconPath) <> "" Then
-        btn.SetIcon2 iconPath
-    End If
 
     Set btn = cb.Controls.AddCustomButton( _
         cdrCmdCategoryMacros, _
         "MgoCorel.modLabel.Plugin_ShowLabelForm" _
     )
-    btn.Caption = "Buat Label"
-    btn.ToolTipText = "Buat Label"
-    btn.DescriptionText = "Membuka form untuk membuat label"
+
+    btn.Caption = "Buat Label Spanduk"
+    btn.ToolTipText = "Buat Label Spanduk"
 
     iconPath = Application.GMSManager.UserGMSPath & "icons\label.ico"
-    If Dir$(iconPath) <> "" Then
-        btn.SetIcon2 iconPath
-    End If
 
-    Set btn = cb.Controls.AddCustomButton( _
-        cdrCmdCategoryMacros, _
-        "MgoCorel.modSettings.Plugin_ShowSettingsForm" _
-    )
-    btn.Caption = "Pengaturan"
-    btn.ToolTipText = "Pengaturan"
-    btn.DescriptionText = "Membuka pengaturan MgoCorel"
-
-    iconPath = Application.GMSManager.UserGMSPath & "icons\settings.ico"
-    If Dir$(iconPath) <> "" Then
-        btn.SetIcon2 iconPath
-    End If
-
-    Set btn = cb.Controls.AddCustomButton( _
-        cdrCmdCategoryMacros, _
-        "MgoCorel.modHitung.Plugin_ShowHitungForm" _
-    )
-    btn.Caption = "Hitung Harga"
-    btn.ToolTipText = "Hitung Harga"
-    btn.DescriptionText = "Menghitung harga objek yang dipilih"
-
-    iconPath = Application.GMSManager.UserGMSPath & "icons\calculator.ico"
-    If Dir$(iconPath) <> "" Then
-        btn.SetIcon2 iconPath
-    End If
-
-    Set btn = cb.Controls.AddCustomButton( _
-        cdrCmdCategoryMacros, _
-        "MgoCorel.modSusun.Plugin_ShowSusunForm" _
-    )
-    btn.Caption = "Susun Objek"
-    btn.ToolTipText = "Susun Objek"
-    btn.DescriptionText = "Menyusun objek sebanyak mungkin"
-
-    iconPath = Application.GMSManager.UserGMSPath & "icons\susun.ico"
     If Dir$(iconPath) <> "" Then
         btn.SetIcon2 iconPath
     End If
@@ -88,11 +66,39 @@ Public Sub Plugin_CreateToolbar()
         "MgoCorel.modExport.Plugin_ExportLabel" _
     )
 
-    btn.Caption = "Export Label"
-    btn.ToolTipText = "Export Label"
-    btn.DescriptionText = "Export label yang dipilih"
+    btn.Caption = "Export Spanduk"
+    btn.ToolTipText = "Export Spanduk"
 
     iconPath = Application.GMSManager.UserGMSPath & "icons\export.ico"
+
+    If Dir$(iconPath) <> "" Then
+        btn.SetIcon2 iconPath
+    End If
+
+    Set btn = cb.Controls.AddCustomButton( _
+        cdrCmdCategoryMacros, _
+        "MgoCorel.modHitung.Plugin_ShowHitungForm" _
+    )
+
+    btn.Caption = "Hitung Harga"
+    btn.ToolTipText = "Hitung Harga"
+
+    iconPath = Application.GMSManager.UserGMSPath & "icons\calculator.ico"
+
+    If Dir$(iconPath) <> "" Then
+        btn.SetIcon2 iconPath
+    End If
+
+    Set btn = cb.Controls.AddCustomButton( _
+        cdrCmdCategoryMacros, _
+        "MgoCorel.modSusun.Plugin_ShowSusunForm" _
+    )
+
+    btn.Caption = "Susun Objek"
+    btn.ToolTipText = "Susun Objek"
+
+    iconPath = Application.GMSManager.UserGMSPath & "icons\susun.ico"
+
     If Dir$(iconPath) <> "" Then
         btn.SetIcon2 iconPath
     End If
@@ -104,9 +110,9 @@ Public Sub Plugin_CreateToolbar()
 
     btn.Caption = "Imposisi Otomatis"
     btn.ToolTipText = "Imposisi Otomatis"
-    btn.DescriptionText = "Menyusun objek ke beberapa page secara otomatis"
 
     iconPath = Application.GMSManager.UserGMSPath & "icons\imposisi.ico"
+
     If Dir$(iconPath) <> "" Then
         btn.SetIcon2 iconPath
     End If
@@ -118,9 +124,9 @@ Public Sub Plugin_CreateToolbar()
 
     btn.Caption = "Duplicate Quantity"
     btn.ToolTipText = "Duplicate Quantity"
-    btn.DescriptionText = "Duplikasi quantity dan langsung imposisi otomatis"
 
     iconPath = Application.GMSManager.UserGMSPath & "icons\duplicate.ico"
+
     If Dir$(iconPath) <> "" Then
         btn.SetIcon2 iconPath
     End If
@@ -132,9 +138,9 @@ Public Sub Plugin_CreateToolbar()
 
     btn.Caption = "Numbering Otomatis"
     btn.ToolTipText = "Numbering Otomatis"
-    btn.DescriptionText = "Memberi nomor otomatis dan langsung imposisi"
 
     iconPath = Application.GMSManager.UserGMSPath & "icons\numbering.ico"
+
     If Dir$(iconPath) <> "" Then
         btn.SetIcon2 iconPath
     End If
@@ -146,12 +152,13 @@ Public Sub Plugin_CreateToolbar()
 
     btn.Caption = "Job Builder"
     btn.ToolTipText = "Job Builder"
-    btn.DescriptionText = "Membuat output berdasarkan data Excel"
 
     iconPath = Application.GMSManager.UserGMSPath & "icons\excel.ico"
+
     If Dir$(iconPath) <> "" Then
         btn.SetIcon2 iconPath
     End If
+
 
     Set btn = cb.Controls.AddCustomButton( _
         cdrCmdCategoryMacros, _
@@ -160,22 +167,52 @@ Public Sub Plugin_CreateToolbar()
 
     btn.Caption = "Rectangle Nesting"
     btn.ToolTipText = "Rectangle Nesting"
-    btn.DescriptionText = "Menyusun persegi semaksimal mungkin ke dalam kotak"
 
     iconPath = Application.GMSManager.UserGMSPath & "icons\rectangleNesting.ico"
+
+    If Dir$(iconPath) <> "" Then
+        btn.SetIcon2 iconPath
+    End If
+
+
+    Set btn = cb.Controls.AddCustomButton( _
+        cdrCmdCategoryMacros, _
+        "MgoCorel.modNesting.Plugin_ShowNestingForm" _
+    )
+
+    btn.Caption = "Nesting"
+    btn.ToolTipText = "Nesting"
+
+    iconPath = Application.GMSManager.UserGMSPath & "icons\nesting.ico"
+
     If Dir$(iconPath) <> "" Then
         btn.SetIcon2 iconPath
     End If
 
     Set btn = cb.Controls.AddCustomButton( _
         cdrCmdCategoryMacros, _
-        "MgoCorel.modNesting.Plugin_ShowNestingForm" _
-        )
-    btn.Caption = "Nesting"
-    btn.ToolTipText = "Nesting"
-    btn.DescriptionText = "Menyusun objek semaksimal mungkin ke dalam kotak"
+        "MgoCorel.modSettings.Plugin_ShowSettingsForm" _
+    )
 
-    iconPath = Application.GMSManager.UserGMSPath & "icons\nesting.ico"
+    btn.Caption = "Pengaturan"
+    btn.ToolTipText = "Pengaturan"
+
+    iconPath = Application.GMSManager.UserGMSPath & "icons\settings.ico"
+
+    If Dir$(iconPath) <> "" Then
+        btn.SetIcon2 iconPath
+    End If
+
+    Set btn = cb.Controls.AddCustomButton( _
+        cdrCmdCategoryMacros, _
+        "MgoCorel.modMain.Plugin_ShowMainDialog" _
+    )
+
+    btn.Caption = "Detail Aplikasi"
+    btn.ToolTipText = "Detail Aplikasi"
+
+    iconPath = Application.GMSManager.UserGMSPath & "icons\main.ico"
+
     If Dir$(iconPath) <> "" Then
         btn.SetIcon2 iconPath
     End If
@@ -187,60 +224,82 @@ Public Sub Plugin_CreateToolbar()
 
     Exit Sub
 
+
 ErrHandler:
-    MsgBox "Gagal membuat toolbar MgoCorel." & vbCrLf & _
-           "Error " & Err.Number & ": " & Err.Description, _
-           vbCritical, _
-           "MgoCorel"
+
+    MsgBox _
+        "Gagal membuat toolbar MgoCorel." & vbCrLf & _
+        "Error " & Err.Number & ": " & Err.Description, _
+        vbCritical, _
+        "MgoCorel"
+
 End Sub
 
+
 Public Sub Plugin_RemoveToolbar()
+
+    Dim i As Long
     Dim cb As CommandBar
 
     On Error Resume Next
 
-    Set cb = Application.CommandBars(TOOLBAR_NAME)
+    For i = Application.CommandBars.Count To 1 Step -1
 
-    If Not cb Is Nothing Then
-        cb.Delete
-    End If
+        Set cb = Nothing
+        Set cb = Application.CommandBars.Item(i)
+
+        If Not cb Is Nothing Then
+
+            If StrComp(cb.Name, TOOLBAR_NAME, vbTextCompare) = 0 Then
+                cb.Delete
+            End If
+
+        End If
+
+    Next i
 
     Set cb = Nothing
 
     On Error GoTo 0
+
 End Sub
 
 Public Sub Plugin_ShowToolbar()
+
     Dim cb As CommandBar
 
     On Error GoTo ErrHandler
 
-    Set cb = Application.CommandBars(TOOLBAR_NAME)
+    Set cb = GetMgoCorelToolbar()
 
     If cb Is Nothing Then
         Plugin_CreateToolbar
         Exit Sub
     End If
-
     cb.Visible = True
 
     Set cb = Nothing
 
     Exit Sub
 
+
 ErrHandler:
-    MsgBox "Gagal menampilkan toolbar MgoCorel." & vbCrLf & _
-           "Error " & Err.Number & ": " & Err.Description, _
-           vbCritical, _
-           "MgoCorel"
+
+    MsgBox _
+        "Gagal menampilkan toolbar MgoCorel." & vbCrLf & _
+        "Error " & Err.Number & ": " & Err.Description, _
+        vbCritical, _
+        "MgoCorel"
+
 End Sub
 
 Public Sub Plugin_HideToolbar()
+
     Dim cb As CommandBar
 
     On Error GoTo ErrHandler
 
-    Set cb = Application.CommandBars(TOOLBAR_NAME)
+    Set cb = GetMgoCorelToolbar()
 
     If Not cb Is Nothing Then
         cb.Visible = False
@@ -250,9 +309,13 @@ Public Sub Plugin_HideToolbar()
 
     Exit Sub
 
+
 ErrHandler:
-    MsgBox "Gagal menyembunyikan toolbar MgoCorel." & vbCrLf & _
-           "Error " & Err.Number & ": " & Err.Description, _
-           vbCritical, _
-           "MgoCorel"
+
+    MsgBox _
+        "Gagal menyembunyikan toolbar MgoCorel." & vbCrLf & _
+        "Error " & Err.Number & ": " & Err.Description, _
+        vbCritical, _
+        "MgoCorel"
+
 End Sub
