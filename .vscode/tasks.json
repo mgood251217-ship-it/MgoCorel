@@ -23,6 +23,69 @@
                 "clear": true
             },
             "problemMatcher": []
+        },
+        {
+            "label": "Install MgoCorel Addon",
+            "type": "shell",
+            "command": "powershell.exe",
+            "args": [
+                "-NoProfile",
+                "-ExecutionPolicy",
+                "Bypass",
+                "-File",
+                "${workspaceFolder}\\scripts\\install-addon.ps1"
+            ],
+            "presentation": {
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared",
+                "clear": true
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "Uninstall MgoCorel Addon",
+            "type": "shell",
+            "command": "powershell.exe",
+            "args": [
+                "-NoProfile",
+                "-ExecutionPolicy",
+                "Bypass",
+                "-File",
+                "${workspaceFolder}\\scripts\\install-addon.ps1",
+                "-Uninstall"
+            ],
+            "presentation": {
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared",
+                "clear": true
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "Build MgoCorel Addon",
+            "type": "shell",
+            "command": "node",
+            "args": [
+                "${workspaceFolder}\\scripts\\build-addon.mjs"
+            ],
+            "presentation": {
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared",
+                "clear": true
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "Build and Install MgoCorel Addon",
+            "dependsOn": [
+                "Build MgoCorel Addon",
+                "Install MgoCorel Addon"
+            ],
+            "dependsOrder": "sequence",
+            "problemMatcher": []
         }
     ]
 }

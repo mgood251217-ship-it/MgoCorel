@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<config>
+  <resources>
+    <resource name="MgoCorel.Resources" path="Resources.dll">
+      <resourceMap>
+        <resEntry id="36f57221-bc31-4ddb-8c66-5c86b1f999b6" icon="102"/>
+        <resEntry id="c64401b3-ea8a-4295-bbcb-d8c407dba836" icon="107"/>
+        <resEntry id="15f0179a-5594-4ec8-b3fd-69ee17eedcfa" icon="113"/>
+        <resEntry id="7f6d3bd7-7144-47a6-aaae-659ba4beb89d" icon="101"/>
+        <resEntry id="4d9a55ff-0ad7-4268-8a7e-dd8fa602cc91" icon="104"/>
+        <resEntry id="38533386-1283-49fa-9e35-124f6fab8744" icon="102"/>
+        <resEntry id="379515da-830d-4150-9f70-17375552607c" icon="112"/>
+        <resEntry id="cb77d38a-f257-41ff-bebd-a5618aed5c19" icon="107"/>
+        <resEntry id="e3acc071-1633-4690-ab72-6d485e478b1f" icon="105"/>
+        <resEntry id="e153e09d-7dbd-43fc-87dc-ee2f3f26c233" icon="113"/>
+        <resEntry id="73f734b6-a01a-4618-bbb0-e725d15837f5" icon="106"/>
+        <resEntry id="4527162e-44c4-474c-b91b-3023d1072c5b" icon="111"/>
+        <resEntry id="8ad99ce3-0900-432f-a957-59a6b23e5a3e" icon="109"/>
+        <resEntry id="8cdb5bfd-4cc6-421c-b5d8-79e447e0a253" icon="101"/>
+        <resEntry id="11fcd242-68e2-4086-b1dd-0c94770774fc" icon="103"/>
+        <resEntry id="d73dfff2-ed92-4037-8892-c240eeaf3da6" icon="110"/>
+        <resEntry id="ccdd8939-e735-436c-a223-2cc23200c453" icon="104"/>
+      </resourceMap>
+    </resource>
+  </resources>
+</config>
