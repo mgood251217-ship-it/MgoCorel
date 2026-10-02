@@ -1,10 +1,10 @@
 VERSION 5.00
 Begin {C62A69F0-16DC-11CE-9E98-00AA00574A4F} frmLabel 
    Caption         =   "Pelabelan Spanduk"
-   ClientHeight    =   5655
+   ClientHeight    =   7320
    ClientLeft      =   120
    ClientTop       =   465
-   ClientWidth     =   4095
+   ClientWidth     =   5550
    OleObjectBlob   =   "frmLabel.frx":0000
    StartUpPosition =   1  'CenterOwner
 End
@@ -13,6 +13,7 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
+
 
 Option Explicit
 
@@ -27,6 +28,8 @@ Private mCanvasLeft As Double
 Private mCanvasRight As Double
 
 Private Sub UserForm_Initialize()
+    ApplyButtonTheme Me
+
     LoadSystems
     LoadProducts
     LoadFinishings
@@ -122,7 +125,7 @@ Private Sub InitializeDotCounts()
 
     Set sr = ActiveSelectionRange
 
-    If sr.Count = 0 Then Exit Sub
+    If sr.count = 0 Then Exit Sub
 
     Set shp = sr(1)
 
@@ -233,7 +236,7 @@ Private Sub cmdSimpan_Click()
 
     Set sr = ActiveSelectionRange
 
-    If sr.Count = 0 Then
+    If sr.count = 0 Then
         MsgBox "Pilih minimal satu objek terlebih dahulu.", vbExclamation, "MgoCorel"
         Exit Sub
     End If
@@ -276,7 +279,7 @@ Private Sub cmdSimpan_Click()
 
     SaveLabelState Me
 
-    For i = 1 To sr.Count
+    For i = 1 To sr.count
         Set shp = sr(i)
 
         widthM = GetShapeWidthM(shp)
