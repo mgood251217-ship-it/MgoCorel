@@ -1,10 +1,10 @@
 VERSION 5.00
 Begin {C62A69F0-16DC-11CE-9E98-00AA00574A4F} frmDots 
    Caption         =   "Pengaturan Dots"
-   ClientHeight    =   3135
+   ClientHeight    =   3825
    ClientLeft      =   120
    ClientTop       =   465
-   ClientWidth     =   3255
+   ClientWidth     =   4200
    OleObjectBlob   =   "frmDots.frx":0000
    StartUpPosition =   1  'CenterOwner
 End
@@ -13,6 +13,7 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
+
 
 Option Explicit
 
@@ -23,6 +24,8 @@ Public RightCount As Long
 Public Confirmed As Boolean
 
 Private Sub UserForm_Initialize()
+    ApplyButtonTheme Me
+
     If TopCount <= 0 Then TopCount = 2
     If BottomCount <= 0 Then BottomCount = 2
     If LeftCount <= 0 Then LeftCount = 2
