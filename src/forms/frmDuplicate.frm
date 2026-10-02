@@ -1,10 +1,10 @@
 VERSION 5.00
 Begin {C62A69F0-16DC-11CE-9E98-00AA00574A4F} frmDuplicate 
    Caption         =   "Duplicate Quantity"
-   ClientHeight    =   3015
+   ClientHeight    =   3690
    ClientLeft      =   120
    ClientTop       =   465
-   ClientWidth     =   3240
+   ClientWidth     =   4410
    OleObjectBlob   =   "frmDuplicate.frx":0000
    StartUpPosition =   1  'CenterOwner
 End
@@ -13,9 +13,12 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
+
 Option Explicit
 
 Private Sub UserForm_Initialize()
+    ApplyButtonTheme Me
+
     txtQuantity.value = "10"
     txtGap.value = "2"
     UpdateInfo
@@ -47,8 +50,8 @@ Private Sub UpdateInfo()
 
     Set sr = ActiveSelectionRange
 
-    If sr.Count = 0 Then
-        lblInfo.Caption = _
+    If sr.count = 0 Then
+        lblInfo.caption = _
             "Objek      : 0" & vbCrLf & _
             "Muat /page : -" & vbCrLf & _
             "Kolom      : -" & vbCrLf & _
@@ -63,8 +66,8 @@ Private Sub UpdateInfo()
     gapMm = Val(txtGap.value)
 
     If quantity < 1 Then
-        lblInfo.Caption = _
-            "Objek      : " & sr.Count & vbCrLf & _
+        lblInfo.caption = _
+            "Objek      : " & sr.count & vbCrLf & _
             "Muat /page : -" & vbCrLf & _
             "Kolom      : -" & vbCrLf & _
             "Baris       : -" & vbCrLf & _
@@ -72,7 +75,7 @@ Private Sub UpdateInfo()
         Exit Sub
     End If
 
-    totalCount = sr.Count * quantity
+    totalCount = sr.count * quantity
 
     If gapMm < 0 Then
         gapMm = 0
@@ -87,7 +90,7 @@ Private Sub UpdateInfo()
     If sourceWidth > pageWidth Or _
        sourceHeight > pageHeight Then
 
-        lblInfo.Caption = _
+        lblInfo.caption = _
             "Objek      : " & totalCount & vbCrLf & _
             "Muat /page : 0" & vbCrLf & _
             "Kolom      : 0" & vbCrLf & _
@@ -127,7 +130,7 @@ Private Sub UpdateInfo()
         (totalCount + capacity - 1) \ _
         capacity
 
-    lblInfo.Caption = _
+    lblInfo.caption = _
         "Objek      : " & totalCount & vbCrLf & _
         "Muat /page : " & capacity & vbCrLf & _
         "Kolom      : " & columns & vbCrLf & _
@@ -158,7 +161,7 @@ Private Sub cmdDuplicate_Click()
         Exit Sub
     End If
 
-    If ActiveSelectionRange.Count = 0 Then
+    If ActiveSelectionRange.count = 0 Then
         MsgBox "Pilih minimal satu objek terlebih dahulu.", _
                vbExclamation, _
                "MgoCorel"
