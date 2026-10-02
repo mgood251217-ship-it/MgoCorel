@@ -1,10 +1,10 @@
 VERSION 5.00
 Begin {C62A69F0-16DC-11CE-9E98-00AA00574A4F} frmHitung 
-   Caption         =   "UserForm1"
-   ClientHeight    =   6045
+   Caption         =   "Hitung Harga Spanduk"
+   ClientHeight    =   6555
    ClientLeft      =   120
    ClientTop       =   465
-   ClientWidth     =   9900.001
+   ClientWidth     =   10200
    OleObjectBlob   =   "frmHitung.frx":0000
    StartUpPosition =   1  'CenterOwner
 End
@@ -15,18 +15,21 @@ Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
 
 
+
+
 Option Explicit
 
 Private Sub UserForm_Initialize()
+    ApplyButtonTheme Me
+
     LoadProducts
     LoadFinishings
 
-    lstDetail.ColumnCount = 6
-    lstDetail.ColumnWidths = "85 pt;85 pt;70 pt;40 pt;90 pt;90 pt"
+    PrepareDetailList
 
-    lblHargaMeter.Caption = "Harga / m² : Rp 0"
-    lblSubtotal.Caption = "Subtotal : Rp 0"
-    lblTotal.Caption = "TOTAL : Rp 0"
+    lblHargaMeter.caption = "Rp 0"
+    lblSubtotal.caption = "Rp 0"
+    lblTotal.caption = "Rp 0"
 
     If cmbProduk.ListCount > 0 Then
         cmbProduk.ListIndex = 0
@@ -35,6 +38,20 @@ Private Sub UserForm_Initialize()
     If cmbFinishing.ListCount > 0 Then
         cmbFinishing.ListIndex = 0
     End If
+End Sub
+
+Public Sub PrepareDetailList()
+    With lstDetail
+        .Clear
+        .ColumnCount = 6
+        .columnWidths = "80 pt;80 pt;80 pt;40 pt;90 pt;100 pt"
+        .AddItem "Produk"
+        .List(0, 1) = "Finishing"
+        .List(0, 2) = "Ukuran"
+        .List(0, 3) = "Qty"
+        .List(0, 4) = "Satuan"
+        .List(0, 5) = "Jumlah"
+    End With
 End Sub
 
 Private Sub LoadProducts()

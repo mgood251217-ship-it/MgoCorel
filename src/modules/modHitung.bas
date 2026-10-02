@@ -95,7 +95,7 @@ Public Sub CalculateSelectionPrice(ByVal form As Object)
         End If
     Next i
 
-    form.lstDetail.Clear
+    form.PrepareDetailList
 
     keys = groups.Keys
 
@@ -133,13 +133,13 @@ Public Sub CalculateSelectionPrice(ByVal form As Object)
     total = RoundDown500(total)
 
     form.lblHargaMeter.Caption = _
-        "Harga / m² : " & FormatRupiah(pricePerM2)
+        "" & FormatRupiah(pricePerM2)
 
     form.lblSubtotal.Caption = _
-        "Subtotal : " & FormatRupiah(subtotal)
+        "" & FormatRupiah(subtotal)
 
     form.lblTotal.Caption = _
-        "TOTAL : " & FormatRupiah(total)
+        "" & FormatRupiah(total)
 End Sub
 
 Private Function RoundDown500(ByVal value As Double) As Double
