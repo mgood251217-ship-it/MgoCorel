@@ -1,10 +1,10 @@
 VERSION 5.00
 Begin {C62A69F0-16DC-11CE-9E98-00AA00574A4F} frmCanvas 
    Caption         =   "Atur Canvas"
-   ClientHeight    =   3135
+   ClientHeight    =   3840
    ClientLeft      =   120
    ClientTop       =   465
-   ClientWidth     =   3210
+   ClientWidth     =   4635
    OleObjectBlob   =   "frmCanvas.frx":0000
    StartUpPosition =   1  'CenterOwner
 End
@@ -13,6 +13,7 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
+
 Option Explicit
 
 Public CanvasTop As Double
@@ -22,6 +23,8 @@ Public CanvasRight As Double
 Public Confirmed As Boolean
 
 Private Sub UserForm_Initialize()
+    ApplyButtonTheme Me
+
     If CanvasTop <= 0 Then CanvasTop = GetCanvasExtra() / 2#
     If CanvasBottom <= 0 Then CanvasBottom = GetCanvasExtra() / 2#
     If CanvasLeft <= 0 Then CanvasLeft = GetCanvasExtra() / 2#
