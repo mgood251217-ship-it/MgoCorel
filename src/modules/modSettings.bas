@@ -146,10 +146,16 @@ Public Sub AddProduct(ByVal productName As String, ByVal price As Double)
     mProducts.Add Array(productName, price)
 End Sub
 Public Sub UpdateProduct(ByVal index As Long, ByVal productName As String, ByVal price As Double)
+    Dim isLast As Boolean
     InitializeSettings
     If index < 1 Or index > mProducts.Count Then Exit Sub
+    isLast = (index = mProducts.Count)
     mProducts.Remove index
-    mProducts.Add Array(productName, price), , index
+    If isLast Then
+        mProducts.Add Array(productName, price)
+    Else
+        mProducts.Add Array(productName, price), , index
+    End If
 End Sub
 Public Sub RemoveProduct(ByVal index As Long)
     InitializeSettings
@@ -162,10 +168,16 @@ Public Sub AddFinishing(ByVal finishingName As String, ByVal price As Double)
     mFinishings.Add Array(finishingName, price)
 End Sub
 Public Sub UpdateFinishing(ByVal index As Long, ByVal finishingName As String, ByVal price As Double)
+    Dim isLast As Boolean
     InitializeSettings
     If index < 1 Or index > mFinishings.Count Then Exit Sub
+    isLast = (index = mFinishings.Count)
     mFinishings.Remove index
-    mFinishings.Add Array(finishingName, price), , index
+    If isLast Then
+        mFinishings.Add Array(finishingName, price)
+    Else
+        mFinishings.Add Array(finishingName, price), , index
+    End If
 End Sub
 Public Sub RemoveFinishing(ByVal index As Long)
     InitializeSettings
@@ -178,10 +190,16 @@ Public Sub AddOperator(ByVal operatorName As String)
     mOperators.Add operatorName
 End Sub
 Public Sub UpdateOperator(ByVal index As Long, ByVal operatorName As String)
+    Dim isLast As Boolean
     InitializeSettings
     If index < 1 Or index > mOperators.Count Then Exit Sub
+    isLast = (index = mOperators.Count)
     mOperators.Remove index
-    mOperators.Add operatorName, , index
+    If isLast Then
+        mOperators.Add operatorName
+    Else
+        mOperators.Add operatorName, , index
+    End If
 End Sub
 Public Sub RemoveOperator(ByVal index As Long)
     InitializeSettings
