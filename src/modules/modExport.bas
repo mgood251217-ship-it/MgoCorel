@@ -18,6 +18,7 @@ Public Sub Plugin_ExportLabel()
     Dim minExportDpi As Double
     Dim maxExportDpi As Double
     Dim adjustedCount As Long
+    Dim lastExportFolder As String
 
     On Error GoTo ErrHandler
 
@@ -63,13 +64,13 @@ Public Sub Plugin_ExportLabel()
 
     For i = 1 To totalCount
         Set shp = sr(i)
-
         currentPath = ""
 
         If shp.Type = cdrGroupShape Then
             currentPath = GetExportPreviewPath(shp, exportFolder)
 
             If currentPath <> "" Then
+                lastExportFolder = Left$(currentPath, InStrRev(currentPath, "\") - 1)
                 loading.SetExportInfo i, totalCount, currentPath
             Else
                 loading.SetExportInfo i, totalCount, _
@@ -117,18 +118,18 @@ Public Sub Plugin_ExportLabel()
             "DPI pilih  : " & Format$(dpi, "0.##") & vbCrLf & _
             "DPI export : " & Format$(minExportDpi, "0.##") & vbCrLf & _
             "Auto turun : " & adjustedCount & " file" & vbCrLf & _
-            "Folder     : " & exportFolder, _
+            "Folder     : " & lastExportFolder, _
             vbInformation, _
             "MgoCorel"
     Else
         MsgBox "Export selesai." & vbCrLf & vbCrLf & _
-               "Berhasil   : " & exportedCount & vbCrLf & _
-               "Gagal      : " & failedCount & vbCrLf & _
-               "Warna      : " & GetImageTypeName(imageType) & vbCrLf & _
-               "DPI        : " & Format$(dpi, "0.##") & vbCrLf & _
-               "Folder     : " & exportFolder, _
-               vbExclamation, _
-               "MgoCorel"
+            "Berhasil   : " & exportedCount & vbCrLf & _
+            "Gagal      : " & failedCount & vbCrLf & _
+            "Warna      : " & GetImageTypeName(imageType) & vbCrLf & _
+            "DPI        : " & Format$(dpi, "0.##") & vbCrLf & _
+            "Folder     : " & lastExportFolder, _
+            vbExclamation, _
+            "MgoCorel"
     End If
 
     Exit Sub
@@ -169,11 +170,6 @@ Private Function GetExportPreviewPath( _
     Dim invoiceNumber As String
     Dim labelDate As String
     Dim documentDate As Date
-    Dim monthNames As Variant
-    Dim yearFolder As String
-    Dim monthFolder As String
-    Dim dayFolder As String
-    Dim bahanFolder As String
     Dim orderFolder As String
     Dim fileName As String
 
@@ -184,7 +180,6 @@ Private Function GetExportPreviewPath( _
     If labelText = "" Then Exit Function
 
     parts = Split(labelText, "_")
-
     index = 0
 
     If UCase$(parts(0)) = "ONLINE" Then
@@ -210,6 +205,94 @@ Private Function GetExportPreviewPath( _
         documentDate = Date
     End If
 
+    orderFolder = GetExportOrderFolder( _
+        exportFolder, _
+        documentDate, _
+        productName, _
+        systemName, _
+        nama, _
+        deadline, _
+        operatorName, _
+        invoiceNumber _
+    )
+
+    fileName = SanitizeFileName( _
+        productName & "_" & _
+        ukuran & "_" & _
+        finishing & "_" & _
+        quantity & ".jpg" _
+    )
+
+    GetExportPreviewPath = orderFolder & "\" & fileName
+
+    Exit Function
+
+ErrorHandler:
+    GetExportPreviewPath = ""
+End Function
+
+Private Function GetExportOrderFolder( _
+    ByVal exportFolder As String, _
+    ByVal documentDate As Date, _
+    ByVal productName As String, _
+    ByVal systemName As String, _
+    ByVal nama As String, _
+    ByVal deadline As String, _
+    ByVal operatorName As String, _
+    ByVal invoiceNumber As String) As String
+
+    Dim yearFolder As String
+    Dim monthFolder As String
+    Dim dayFolder As String
+    Dim parentFolder As String
+    Dim orderFolder As String
+    Dim orderName As String
+
+    If Right$(exportFolder, 1) = "\" Then
+        exportFolder = Left$(exportFolder, Len(exportFolder) - 1)
+    End If
+
+    yearFolder = exportFolder & "\" & _
+                 Format$(documentDate, "yyyy")
+
+    monthFolder = yearFolder & "\" & _
+                  GetMonthFolderName(documentDate)
+
+    dayFolder = monthFolder & "\" & _
+                Format$(documentDate, "dd")
+
+    If GetUseProductFolder() Then
+        parentFolder = dayFolder & "\" & _
+                       SanitizeFileName(productName)
+    Else
+        parentFolder = dayFolder
+    End If
+
+    If systemName <> "" Then
+        orderName = _
+            systemName & "_" & _
+            nama & "_" & _
+            deadline & "_" & _
+            operatorName & "_" & _
+            invoiceNumber
+    Else
+        orderName = _
+            nama & "_" & _
+            deadline & "_" & _
+            operatorName & "_" & _
+            invoiceNumber
+    End If
+
+    orderFolder = parentFolder & "\" & _
+                  SanitizeFileName(orderName)
+
+    GetExportOrderFolder = orderFolder
+End Function
+
+Private Function GetMonthFolderName(ByVal documentDate As Date) As String
+    Dim monthNames As Variant
+    Dim monthFormat As String
+
     monthNames = Array( _
         "", _
         "Januari", _
@@ -226,55 +309,19 @@ Private Function GetExportPreviewPath( _
         "Desember" _
     )
 
-    If Right$(exportFolder, 1) <> "\" Then
-        exportFolder = exportFolder & "\"
-    End If
+    monthFormat = GetMonthFormat()
 
-    yearFolder = exportFolder & _
-                 Format$(documentDate, "yyyy")
+    Select Case monthFormat
+        Case "Oktober", "Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "November", "Desember"
+            GetMonthFolderName = monthNames(Month(documentDate))
 
-    monthFolder = yearFolder & "\" & _
-                  Format$(documentDate, "mm") & " " & _
-                  monthNames(Month(documentDate))
+        Case "10"
+            GetMonthFolderName = Format$(documentDate, "mm")
 
-    dayFolder = monthFolder & "\" & _
-                Format$(documentDate, "dd")
-
-    bahanFolder = dayFolder & "\" & _
-                  SanitizeFileName(productName)
-
-    If systemName <> "" Then
-        orderFolder = bahanFolder & "\" & _
-                      SanitizeFileName( _
-                          systemName & "_" & _
-                          nama & "_" & _
-                          deadline & "_" & _
-                          operatorName & "_" & _
-                          invoiceNumber _
-                      )
-    Else
-        orderFolder = bahanFolder & "\" & _
-                      SanitizeFileName( _
-                          nama & "_" & _
-                          deadline & "_" & _
-                          operatorName & "_" & _
-                          invoiceNumber _
-                      )
-    End If
-
-    fileName = SanitizeFileName( _
-        productName & "_" & _
-        ukuran & "_" & _
-        finishing & "_" & _
-        quantity & ".jpg" _
-    )
-
-    GetExportPreviewPath = orderFolder & "\" & fileName
-
-    Exit Function
-
-ErrorHandler:
-    GetExportPreviewPath = ""
+        Case Else
+            GetMonthFolderName = Format$(documentDate, "mm") & " " & _
+                                 monthNames(Month(documentDate))
+    End Select
 End Function
 
 Private Function GetImageTypeName(ByVal imageType As Long) As String
@@ -313,7 +360,6 @@ Private Function ExportOneLabel( _
     Dim invoiceNumber As String
     Dim labelDate As String
     Dim documentDate As Date
-    Dim monthNames As Variant
     Dim opt As StructExportOptions
     Dim exportDpi As Double
     Dim widthInch As Double
@@ -357,42 +403,29 @@ Private Function ExportOneLabel( _
         documentDate = Date
     End If
 
-    monthNames = Array( _
-        "", _
-        "Januari", _
-        "Februari", _
-        "Maret", _
-        "April", _
-        "Mei", _
-        "Juni", _
-        "Juli", _
-        "Agustus", _
-        "September", _
-        "Oktober", _
-        "November", _
-        "Desember" _
-    )
-
     exportFolder = Trim$(GetExportFolder())
 
     If exportFolder = "" Then Exit Function
 
-    If Right$(exportFolder, 1) <> "\" Then
-        exportFolder = exportFolder & "\"
+    If Right$(exportFolder, 1) = "\" Then
+        exportFolder = Left$(exportFolder, Len(exportFolder) - 1)
     End If
 
-    yearFolder = exportFolder & _
+    yearFolder = exportFolder & "\" & _
                  Format$(documentDate, "yyyy")
 
     monthFolder = yearFolder & "\" & _
-                  Format$(documentDate, "mm") & " " & _
-                  monthNames(Month(documentDate))
+                  GetMonthFolderName(documentDate)
 
     dayFolder = monthFolder & "\" & _
                 Format$(documentDate, "dd")
 
-    bahanFolder = dayFolder & "\" & _
-                  SanitizeFileName(productName)
+    If GetUseProductFolder() Then
+        bahanFolder = dayFolder & "\" & _
+                      SanitizeFileName(productName)
+    Else
+        bahanFolder = dayFolder
+    End If
 
     If systemName <> "" Then
         orderFolder = bahanFolder & "\" & _
@@ -416,7 +449,11 @@ Private Function ExportOneLabel( _
     CreateFolderIfNotExists yearFolder
     CreateFolderIfNotExists monthFolder
     CreateFolderIfNotExists dayFolder
-    CreateFolderIfNotExists bahanFolder
+
+    If GetUseProductFolder() Then
+        CreateFolderIfNotExists bahanFolder
+    End If
+
     CreateFolderIfNotExists orderFolder
 
     fileName = SanitizeFileName( _
