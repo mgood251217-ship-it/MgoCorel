@@ -1,10 +1,10 @@
 VERSION 5.00
 Begin {C62A69F0-16DC-11CE-9E98-00AA00574A4F} frmSettings 
    Caption         =   "Pengaturan MgoCorel"
-   ClientHeight    =   8010
+   ClientHeight    =   5490
    ClientLeft      =   120
    ClientTop       =   465
-   ClientWidth     =   10965
+   ClientWidth     =   9600.001
    OleObjectBlob   =   "frmSettings.frx":0000
    StartUpPosition =   1  'CenterOwner
 End
@@ -13,12 +13,15 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
+
 Option Explicit
 Private selectedProductIndex As Long
 Private selectedFinishingIndex As Long
 Private selectedOperatorIndex As Long
 
 Private Sub UserForm_Initialize()
+    ApplyButtonTheme Me
+
     InitializeSettings
     LoadProducts
     LoadFinishings
@@ -521,13 +524,13 @@ Private Function SaveCurrentFormSettings() As Boolean
 End Function
 
 Private Function ProductNameExists(ByVal nameValue As String, ByVal exceptIndex As Long) As Boolean
-    Dim items As Collection
+    Dim items As collection
     Dim i As Long
     Dim item As Variant
 
     Set items = GetProducts()
 
-    For i = 1 To items.Count
+    For i = 1 To items.count
         If i <> exceptIndex Then
             item = items(i)
 
@@ -544,13 +547,13 @@ Private Function ProductNameExists(ByVal nameValue As String, ByVal exceptIndex 
 End Function
 
 Private Function FinishingNameExists(ByVal nameValue As String, ByVal exceptIndex As Long) As Boolean
-    Dim items As Collection
+    Dim items As collection
     Dim i As Long
     Dim item As Variant
 
     Set items = GetFinishings()
 
-    For i = 1 To items.Count
+    For i = 1 To items.count
         If i <> exceptIndex Then
             item = items(i)
 
@@ -567,13 +570,13 @@ Private Function FinishingNameExists(ByVal nameValue As String, ByVal exceptInde
 End Function
 
 Private Function OperatorNameExists(ByVal nameValue As String, ByVal exceptIndex As Long) As Boolean
-    Dim items As Collection
+    Dim items As collection
     Dim i As Long
     Dim item As Variant
 
     Set items = GetOperators()
 
-    For i = 1 To items.Count
+    For i = 1 To items.count
         If i <> exceptIndex Then
             item = items(i)
 
