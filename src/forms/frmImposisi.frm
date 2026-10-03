@@ -1,10 +1,10 @@
 VERSION 5.00
 Begin {C62A69F0-16DC-11CE-9E98-00AA00574A4F} frmImposisi 
    Caption         =   "Imposisi Otomatis"
-   ClientHeight    =   2430
+   ClientHeight    =   3105
    ClientLeft      =   120
    ClientTop       =   465
-   ClientWidth     =   3240
+   ClientWidth     =   4455
    OleObjectBlob   =   "frmImposisi.frx":0000
    StartUpPosition =   1  'CenterOwner
 End
@@ -15,9 +15,12 @@ Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
 
 
+
 Option Explicit
 
 Private Sub UserForm_Initialize()
+    ApplyButtonTheme Me
+
     txtGap.value = "2"
     UpdateInfo
 End Sub
@@ -42,8 +45,8 @@ Private Sub UpdateInfo()
 
     Set sr = ActiveSelectionRange
 
-    If sr.Count = 0 Then
-        lblInfo.Caption = "Tidak ada objek yang dipilih."
+    If sr.count = 0 Then
+        lblInfo.caption = "Tidak ada objek yang dipilih."
         Exit Sub
     End If
 
@@ -70,7 +73,7 @@ Private Sub UpdateInfo()
     If sourceWidth > pageWidth Or _
        sourceHeight > pageHeight Then
 
-        lblInfo.Caption = _
+        lblInfo.caption = _
             "Objek lebih besar dari page."
 
         Exit Sub
@@ -97,10 +100,10 @@ Private Sub UpdateInfo()
     capacity = columns * rows
 
     totalPages = _
-        (sr.Count + capacity - 1) \ capacity
+        (sr.count + capacity - 1) \ capacity
 
-    lblInfo.Caption = _
-        "Objek      : " & sr.Count & vbCrLf & _
+    lblInfo.caption = _
+        "Objek      : " & sr.count & vbCrLf & _
         "Muat/page  : " & capacity & vbCrLf & _
         "Kolom      : " & columns & vbCrLf & _
         "Baris      : " & rows & vbCrLf & _
@@ -120,7 +123,7 @@ Private Sub cmdImposisi_Click()
         Exit Sub
     End If
 
-    If ActiveSelectionRange.Count = 0 Then
+    If ActiveSelectionRange.count = 0 Then
         MsgBox "Pilih minimal satu objek terlebih dahulu.", _
                vbExclamation, _
                "MgoCorel"
