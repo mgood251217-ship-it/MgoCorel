@@ -1,10 +1,10 @@
 VERSION 5.00
 Begin {C62A69F0-16DC-11CE-9E98-00AA00574A4F} frmJobBuilder 
    Caption         =   "Job Builder"
-   ClientHeight    =   7065
+   ClientHeight    =   8070
    ClientLeft      =   120
    ClientTop       =   465
-   ClientWidth     =   4470
+   ClientWidth     =   6105
    OleObjectBlob   =   "frmJobBuilder.frx":0000
    StartUpPosition =   1  'CenterOwner
 End
@@ -16,6 +16,7 @@ Attribute VB_Exposed = False
 
 
 
+
 Option Explicit
 
 Private mDataCount As Long
@@ -23,6 +24,8 @@ Private mVariableCount As Long
 Private mFileName As String
 
 Private Sub UserForm_Initialize()
+    ApplyButtonTheme Me
+
     txtGap.value = "2"
 
     optPerJob.value = True
@@ -32,7 +35,7 @@ Private Sub UserForm_Initialize()
 
     With lstVariable
         .ColumnCount = 1
-        .ColumnWidths = "100 pt"
+        .columnWidths = "100 pt"
         .IntegralHeight = False
         .Clear
     End With
@@ -124,7 +127,7 @@ Private Sub LoadSheets()
     )
 
     For Each ws In wb.Worksheets
-        cmbSheet.AddItem ws.Name
+        cmbSheet.AddItem ws.name
     Next ws
 
     wb.Close False
@@ -305,7 +308,7 @@ Private Sub LoadSheetInfo()
         )
     End If
 
-    lstVariable.ColumnWidths = columnWidth
+    lstVariable.columnWidths = columnWidth
 
 CleanExit:
 
@@ -365,9 +368,9 @@ Private Sub UpdateInfo()
         modeName = "Satu Job / Baris"
     End If
 
-    templateCount = ActiveSelectionRange.Count
+    templateCount = ActiveSelectionRange.count
 
-    lblInfo.Caption = _
+    lblInfo.caption = _
         "Variable   : " & mVariableCount & vbCrLf & _
         "Data       : " & mDataCount & vbCrLf & _
         "Mode       : " & modeName & vbCrLf & _
@@ -400,7 +403,7 @@ Private Sub cmdProses_Click()
         Exit Sub
     End If
 
-    If ActiveSelectionRange.Count <> 1 Then
+    If ActiveSelectionRange.count <> 1 Then
         MsgBox "Pilih satu template terlebih dahulu.", _
                vbExclamation, _
                "MgoCorel"
@@ -452,7 +455,7 @@ Private Function GetLastUsedRowLocal(ByVal ws As Object) As Long
 
     GetLastUsedRowLocal = _
         usedRange.Row + _
-        usedRange.rows.Count - 1
+        usedRange.rows.count - 1
 End Function
 
 Private Function GetLastUsedColumnLocal(ByVal ws As Object) As Long
@@ -462,7 +465,7 @@ Private Function GetLastUsedColumnLocal(ByVal ws As Object) As Long
 
     GetLastUsedColumnLocal = _
         usedRange.Column + _
-        usedRange.columns.Count - 1
+        usedRange.columns.count - 1
 End Function
 
 Private Function RowHasDataLocal( _
