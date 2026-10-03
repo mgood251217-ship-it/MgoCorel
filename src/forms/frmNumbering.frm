@@ -1,10 +1,10 @@
 VERSION 5.00
 Begin {C62A69F0-16DC-11CE-9E98-00AA00574A4F} frmNumbering 
    Caption         =   "Numbering Otomatis"
-   ClientHeight    =   3975
+   ClientHeight    =   5010
    ClientLeft      =   120
    ClientTop       =   465
-   ClientWidth     =   3285
+   ClientWidth     =   4155
    OleObjectBlob   =   "frmNumbering.frx":0000
    StartUpPosition =   1  'CenterOwner
 End
@@ -13,9 +13,12 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
+
 Option Explicit
 
 Private Sub UserForm_Initialize()
+    ApplyButtonTheme Me
+
     txtNomorAwal.value = "1"
     txtJumlahDigit.value = "6"
     txtQuantity.value = "10"
@@ -56,8 +59,8 @@ Private Sub UpdateInfo()
 
     Set sr = ActiveSelectionRange
 
-    If sr.Count = 0 Then
-        lblInfo.Caption = _
+    If sr.count = 0 Then
+        lblInfo.caption = _
             "Objek      : 0" & vbCrLf & _
             "Muat /page : -" & vbCrLf & _
             "Kolom      : -" & vbCrLf & _
@@ -66,8 +69,8 @@ Private Sub UpdateInfo()
         Exit Sub
     End If
 
-    If sr.Count <> 1 Then
-        lblInfo.Caption = _
+    If sr.count <> 1 Then
+        lblInfo.caption = _
             "Objek      : -" & vbCrLf & _
             "Muat /page : -" & vbCrLf & _
             "Kolom      : -" & vbCrLf & _
@@ -82,7 +85,7 @@ Private Sub UpdateInfo()
     gapMm = Val(txtGap.value)
 
     If quantity < 1 Then
-        lblInfo.Caption = _
+        lblInfo.caption = _
             "Objek      : 0" & vbCrLf & _
             "Muat /page : -" & vbCrLf & _
             "Kolom      : -" & vbCrLf & _
@@ -104,7 +107,7 @@ Private Sub UpdateInfo()
     If sourceWidth > pageWidth Or _
        sourceHeight > pageHeight Then
 
-        lblInfo.Caption = _
+        lblInfo.caption = _
             "Objek      : " & quantity & vbCrLf & _
             "Muat /page : 0" & vbCrLf & _
             "Kolom      : 0" & vbCrLf & _
@@ -144,7 +147,7 @@ Private Sub UpdateInfo()
         (quantity + capacity - 1) \ _
         capacity
 
-    lblInfo.Caption = _
+    lblInfo.caption = _
         "Objek      : " & quantity & vbCrLf & _
         "Muat /page : " & capacity & vbCrLf & _
         "Kolom      : " & columns & vbCrLf & _
@@ -190,7 +193,7 @@ Private Sub cmdNumbering_Click()
         Exit Sub
     End If
 
-    startNumber = CLng(txtNomorAwal.Value)
+    startNumber = CLng(txtNomorAwal.value)
     digitCount = CLng(txtJumlahDigit.value)
     quantity = CLng(txtQuantity.value)
     gapMm = CDbl(txtGap.value)
@@ -227,7 +230,7 @@ Private Sub cmdNumbering_Click()
         Exit Sub
     End If
 
-    If ActiveSelectionRange.Count <> 1 Then
+    If ActiveSelectionRange.count <> 1 Then
         MsgBox "Pilih satu desain/template saja.", _
                vbExclamation, _
                "MgoCorel"
