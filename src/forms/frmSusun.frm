@@ -1,10 +1,10 @@
 VERSION 5.00
 Begin {C62A69F0-16DC-11CE-9E98-00AA00574A4F} frmSusun 
    Caption         =   "Susun Objek"
-   ClientHeight    =   3390
+   ClientHeight    =   2745
    ClientLeft      =   120
    ClientTop       =   465
-   ClientWidth     =   3240
+   ClientWidth     =   4425
    OleObjectBlob   =   "frmSusun.frx":0000
    StartUpPosition =   1  'CenterOwner
 End
@@ -15,9 +15,12 @@ Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
 
 
+
 Option Explicit
 
 Private Sub UserForm_Initialize()
+    ApplyButtonTheme Me
+
     txtGap.value = "2"
     chkCutLine.value = False
     optPage.value = True
