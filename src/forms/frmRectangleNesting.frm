@@ -1,10 +1,10 @@
 VERSION 5.00
 Begin {C62A69F0-16DC-11CE-9E98-00AA00574A4F} frmRectangleNesting 
    Caption         =   "Rectangle Nesting"
-   ClientHeight    =   3120
+   ClientHeight    =   3945
    ClientLeft      =   120
    ClientTop       =   465
-   ClientWidth     =   3270
+   ClientWidth     =   3960
    OleObjectBlob   =   "frmRectangleNesting.frx":0000
    StartUpPosition =   1  'CenterOwner
 End
@@ -14,9 +14,12 @@ Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
 
+
 Option Explicit
 
 Private Sub UserForm_Initialize()
+    ApplyButtonTheme Me
+
     txtPanjang.value = "1"
     txtLebar.value = "1"
     txtGap.value = "2"
@@ -42,8 +45,8 @@ Private Sub UpdateInfo()
 
     Set sr = ActiveSelectionRange
 
-    lblInfo.Caption = _
-        "Objek : " & sr.Count
+    lblInfo.caption = _
+        "Objek : " & sr.count
 End Sub
 
 Private Sub cmdNesting_Click()
@@ -53,28 +56,28 @@ Private Sub cmdNesting_Click()
     Dim autoRotate As Boolean
     Dim success As Boolean
 
-    If Not IsNumeric(txtPanjang.Value) Or CDbl(txtPanjang.Value) <= 0 Then
+    If Not IsNumeric(txtPanjang.value) Or CDbl(txtPanjang.value) <= 0 Then
         MsgBox "Panjang nesting harus lebih dari 0.", vbExclamation, "MgoCorel"
         txtPanjang.SetFocus
         Exit Sub
     End If
 
-    If Not IsNumeric(txtLebar.Value) Or CDbl(txtLebar.Value) <= 0 Then
+    If Not IsNumeric(txtLebar.value) Or CDbl(txtLebar.value) <= 0 Then
         MsgBox "Lebar nesting harus lebih dari 0.", vbExclamation, "MgoCorel"
         txtLebar.SetFocus
         Exit Sub
     End If
 
-    If Not IsNumeric(txtGap.Value) Or CDbl(txtGap.Value) < 0 Then
+    If Not IsNumeric(txtGap.value) Or CDbl(txtGap.value) < 0 Then
         MsgBox "Gap tidak boleh kurang dari 0.", vbExclamation, "MgoCorel"
         txtGap.SetFocus
         Exit Sub
     End If
 
-    boxWidthM = CDbl(txtPanjang.Value)
-    boxHeightM = CDbl(txtLebar.Value)
-    gapMm = CDbl(txtGap.Value)
-    autoRotate = chkRotate.Value
+    boxWidthM = CDbl(txtPanjang.value)
+    boxHeightM = CDbl(txtLebar.value)
+    gapMm = CDbl(txtGap.value)
+    autoRotate = chkRotate.value
 
     success = ArrangeRectangleNesting( _
         boxWidthM, _
