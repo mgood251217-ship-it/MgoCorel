@@ -23,6 +23,10 @@ Private lblBarBack As Object
 Private lblBar As Object
 
 Private Sub UserForm_Initialize()
+    ApplyButtonTheme Me
+    Me.Font.Name = "Calibri"
+    Me.Font.Size = 12
+
     Me.Caption = "MgoCorel - Export"
     Me.Width = 420
     Me.Height = 150
@@ -36,7 +40,6 @@ Private Sub UserForm_Initialize()
         .Height = 20
         .Caption = "Menyiapkan export..."
         .Font.Bold = True
-        .Font.Size = 11
     End With
 
     Set lblPath = Me.Controls.Add("Forms.Label.1", "lblPath", True)
